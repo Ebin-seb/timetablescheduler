@@ -1,0 +1,48 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/reg.css'%}" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="reg">
+        <h2>SIGNUP</h2><br><br>
+        <form>
+          <label for="name">Name :</label><br>
+          <input
+            type="text"
+            id="name"
+              required
+              placeholder="enter your name"
+          /><br /><br />
+          <label for="mail">Email id :</label><br>
+          <input
+            type="text"
+            id="mail"
+            required
+            placeholder="enter your mail"
+          /><br /><br />
+          <label for="college">college name :</label><br />
+          <select class="college" name="college" id="clg" required>
+            <option disabled selected>select your college</option>
+            <option>cas</option>
+            <option>NIT</option>
+          </select><br><br>
+          <label for="department">Department :</label><br />
+          <select class="department" name="department" id="dep" required>
+            <option disabled selected>select your department</option>
+            <option>computer department</option>
+            <option>commerce department</option>
+          </select><br><br>
+        </form>
+        <div class="button-container">
+        <button type="register" id="register">signup</button>
+      </div></div>
+    </div>
+  </body>
+</html>

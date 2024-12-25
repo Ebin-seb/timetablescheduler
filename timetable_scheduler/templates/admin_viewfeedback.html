@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+          font-family: Arial, sans-serif;
+        }
+        
+        body {
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: cover;
+          background-color: #4a62e9;
+        }
+        
+        button {
+          width: 100px;
+          padding: 7px;
+          color: rgb(14, 14, 13);
+          border: 1px solid black;
+          border-radius: 5px;
+          cursor: pointer;
+          text-decoration-color: rgb(27, 27, 27);
+          text-align: center;
+          margin-top: 20px;
+          transition: 0.5s;
+        }
+        
+        .container {  
+        
+         
+          position: center;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          backdrop-filter: blur(5px);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        
+        table {
+          border-radius: 10px;
+          height: 100px;
+          background-color: rgba(223, 198, 198, 0.3);
+        }
+
+        button{
+    width: 150px;
+    padding: 7px;
+    color: rgb(15, 15, 15);
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: right;
+    text-align: center;
+    margin-top: 20px;
+    transition: 0.5s;
+  }
+  
+        
+        th, td {
+          padding: 10px 20px;
+          
+        }
+        
+      
+</style>      
+  </head>
+  <body>
+    <div class="container">
+      <div class="table">
+        <form action="" method="post"></form>
+        <table>
+          <tr>
+            <th>name</th>
+            <th>feedback</th>
+            <th>submitted at</th>
+          </tr>
+          {% for i in feedbacks %}
+            <tr>
+                <td>{{ i.student_id.username }}</td>
+                <td ><div style="max-height: 150px; overflow-y: scroll; border: 1px solid #ddd; padding: 10px;">{{ i.feedback_text }}</div></td>
+                <td>{{ i.submitted_at }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/admindash"><button type="button">back</button></a>
+
+      </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="{%static 'css/view_college.css'%}" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="table">
+        <form method="post">
+        <table>
+          <tr>
+            <th>id</th>
+            <th>semester</th>
+            <th>course</th>
+            <th>subject</th>
+            <th></th>
+            
+          </tr>
+          {% for i in val %}
+          <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.semester_name}}</td>
+            <td>{{i.course_id.course_name}}</td>
+            <td>{% for subject in i.subjects.all %}
+              {{ subject.subject_name }}{% if not forloop.last %},{% endif %} {% endfor %}
+            </td>
+            
+            <td>
+              <a href="editsem/{{ i.id }}">edit</a>
+              <a href="deletesem/{{ i.id }}" onclick="return confirm('are you sure you want to delete')">delete</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </table>
+        <a href="/addsem"><button type="button">add</button></a>
+        <a href="/add"><button type="button">back</button></a>
+          </form>
+  </body>
+</html>

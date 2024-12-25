@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{%static 'css/add_college.css'%}" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="box">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="dep">department</label>
+          <select name="dep_id" required id="dep">
+            <option value="">Select department</option>
+            {% for j in dep %}
+            <option value="{{j.id}}" {% if c.dep_id.id == j.id %} selected {% endif %}>{{j.dep_name}}</option>
+            {% endfor %}
+          </select>
+          <label for="course">course :</label>
+          <input
+            type="text"
+            id="course"
+            required
+            name="course_name"
+            value="{{c.course_name}}"
+          /><br /><br />
+          
+          <button type="register" id="reg">update</button><br />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conflict Submission</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(
+          135deg,
+          #4a90e2,
+          #003366
+        ); /* Gradient background */
+        background-size: cover;
+      }
+
+      .container {
+        width: 100%;
+        height: 100%;
+        background: rgba(6, 6, 116, 0.7); /* Semi-transparent blue overlay */
+        backdrop-filter: blur(5px); /* Glassmorphism effect */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .form {
+        background: #ffffff; /* White background for the form */
+        border-radius: 10px;
+        padding: 20px;
+        width: 90%;
+        max-width: 600px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        margin-bottom: 20px;
+        border-collapse: collapse;
+        background-color: #f4f4fd; /* Light blue background */
+        border: 1px solid #ddd; /* Light gray border */
+        border-radius: 5px;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd; /* Light gray line */
+        color: #003366; /* Dark blue text */
+      }
+
+      th {
+        background-color: #7f94f0; /* Blue header */
+        color: white;
+        font-weight: bold;
+      }
+
+      td a {
+        text-decoration: none;
+        color: #0056b3; /* Medium blue link */
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
+      td a:hover {
+        color: #0855a1; /* Darker blue on hover */
+      }
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #003366; /* Dark blue for text */
+      }
+
+      textarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        border: 2px solid #003366; /* Dark blue border */
+        border-radius: 5px;
+        resize: none;
+        font-size: 14px;
+        color: #222222; /* Dark blue text */
+        background-color: #f4f4fd; /* Light blue background */
+      }
+
+      textarea::placeholder {
+        color: #003366; /* Dark blue placeholder text */
+      }
+
+      button {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        background-color: #0056b3; /* Medium blue for button */
+        color: #ffffff; /* White text */
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0855a1; /* Darker blue on hover */
+      }
+
+      .scrollable {
+        max-height: 150px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 10px;
+        background-color: #ffffff; /* White background */
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <table>
+            <tr>
+              <th>Conflict</th>
+              <th>Submitted At</th>
+              <th>Actions</th>
+            </tr>
+            {% for i in obj %}
+            <tr>
+              <td>
+                <div class="scrollable">{{ i.conflict_text }}</div>
+              </td>
+              <td>{{ i.submitted_at }}</td>
+              <td>
+                <a
+                  href="deleteconflict/{{ i.id }}"
+                  onclick="return confirm('are you sure you want to delete')"
+                  >Delete</a
+                >
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+          <label for="conflict">Conflicts</label>
+          <textarea
+            id="conflict"
+            placeholder="Enter conflicts here"
+            name="conflict_text"
+            required
+          ></textarea>
+          <button type="submit" id="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

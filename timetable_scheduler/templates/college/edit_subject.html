@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{%static 'css/add_college.css'%}" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="box">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="subject">subject :</label>
+          <input
+            type="text"
+            id="subject"
+            required
+            name="subject_name"
+            value="{{c.subject_name}}"
+          /><br /><br />
+          <label for="contact_hours">contact hours :</label>
+          <input type="text" id="contact_hours" required name="contact_hours"  value="{{c.contact_hours}}"><br><br>
+          <select name="staff_id" required id="staff">
+            <option value="">Select staff</option>
+            {% for j in staff %}
+            <option value="{{j.id}}" {% if j.name == c.staff_id.name %} selected {% endif %}>{{j.name}}</option>
+            {% endfor %}
+          </select>
+          <button type="register" id="reg">update</button><br />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

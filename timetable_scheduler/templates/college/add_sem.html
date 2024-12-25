@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{%static 'css/add_college.css'%}" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="box">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+          <label for="subject">semester :</label>
+          <input
+            type="text"
+            id="semester"
+            required
+            name="semester_name"
+          /><br /><br />
+          <label for="subjects">subjects :</label>
+          <select name="subjects" required id="sub" multiple>
+            <option value="subject_id">Select subjects</option>
+            {% for i in k %}
+            <option value="{{i.id}}">{{i.subject_name}}</option>
+            {% endfor %}
+          </select>
+          <label for="course">course :</label>
+          <select name="course_id" required id="course">
+            <option value="">Select course</option>
+            {% for i in v %}
+            <option value="{{i.id}}">{{i.course_name}}</option>
+            {% endfor %}
+          </select>
+          <button type="register" id="reg">register</button><br />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

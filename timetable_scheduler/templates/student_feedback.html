@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+    
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-size: cover;
+      }
+    
+      .container {
+        width: 100%;
+        height: 100%;
+        background: rgba(6, 6, 116, 0.7); /* Semi-transparent blue overlay */
+        backdrop-filter: blur(5px); /* Glassmorphism effect */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    
+      .form {
+        background: #7f94f0; /* White background for the form */
+        border-radius: 10px;
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Soft shadow */
+      }
+    
+      form label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #003366; /* Dark blue for text */
+      }
+    
+      form textarea {
+        width: 100%;
+        height: 150px;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 2px solid #003366; /* Dark blue border */
+        border-radius: 5px;
+        resize: none;
+        font-size: 14px;
+        color: #222222; /* Dark blue text */
+        background-color: #f4f4fd; /* Light blue background */
+      }
+    
+      form textarea::placeholder {
+        color: #003366; /* Dark blue placeholder text */
+      }
+    
+      form button {
+        display: inline-block;
+        width: 100%;
+        padding: 10px;
+        background-color: #0056b3; /* Medium blue for button */
+        color: #ffffff; /* White text */
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+    
+      form button:hover {
+        background-color: #0855a1; /* Darker blue on hover */
+      }
+    </style>
+      
+  </head>
+  <body>
+    <div class="container">
+      <div class="form">
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="feedback">feedback:</label>
+          <textarea
+            id="conflict"
+            rows="8"
+            cols="4"
+            placeholder="enter conflicts here"
+            name="feedback_text"
+          >
+          </textarea
+          ><br />
+          <button type="submit" id="submit">submit</button><br />
+
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

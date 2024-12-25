@@ -1,0 +1,93 @@
+/* Basic styles for the body */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #2744e9;
+}
+
+header {
+  background-color:rgba(248, 245, 245, 0.5);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgb(243, 236, 236);
+}
+
+.title {
+  margin-bottom: 1px;
+  font-size: 24px;
+}
+
+.navbar nav ul {
+  list-style-type: none;
+  display: flex;
+  margin-left: 1000px;
+
+  padding: 0;
+}
+
+.navbar nav ul li {
+  margin-left: 50px;
+}
+
+.navbar nav ul li a {
+  color: rgb(240, 19, 19);
+  text-decoration: none;
+}
+
+.navbar nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Carousel section styling */
+.carousel-section {
+  max-width: 800px;
+  margin: 50px auto;
+  position: relative;
+}
+
+.carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+button.prev, button.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  border-radius: 50%;
+}
+
+button.prev {
+  left: 10px;
+}
+
+button.next {
+  right: 10px;
+}
+
+button.prev:hover, button.next:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+

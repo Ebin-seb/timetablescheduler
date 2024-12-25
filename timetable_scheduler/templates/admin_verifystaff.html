@@ -1,0 +1,33 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{%static 'css/verifystaff.css'%}">
+</head>
+<body>
+    <div class="container">
+        <div class="table"> 
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Department</th>
+                    <th></th>
+                </tr>
+                {% for i in obj %}
+                <tr>
+                    <td>{{i.name}}</td>
+                    <td>{{i.email}}</td>
+                    <td>{{i.department_id.dep_name}}</td>
+                    <td>
+                        <a href="accept_staff/{{i.login.id}}"><button type="submit" value="accept" id="accept">verify</button></a>
+                        <a href="reject_staff/{{i.login.id}}"><button type="submit" value="reject" id="reject">reject</button></a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div></div></body>
+</html>
