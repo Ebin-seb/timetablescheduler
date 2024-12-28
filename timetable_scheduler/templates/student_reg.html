@@ -1,48 +1,170 @@
-{% load static %}
-
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{% static 'css/reg.css'%}" />
-    <title>Document</title>
-  </head>
-  <body>
+    <title>Registration Form</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(1, 56, 107, 0.8);
+        color: #333;
+      }
+
+-->
+{% extends 'home.html' %}
+{%  block styles %}
+<style>
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background:  rgba(1, 56, 107, 0.8);
+
+      }
+
+      .reg {
+        background-color: #e9e6e6;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        color: black;
+      }
+
+      h2 {
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 20px;
+        color: #111111;
+      }
+
+      label {
+        font-size: 14px;
+        margin-bottom: 5px;
+        display: block;
+        font-weight: 500;
+      }
+
+      input, 
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: 1px solid #f8f6f6;
+        background-color: #f9f9f9;
+        font-size: 14px;
+        color: #0a0a0a;
+        outline: none;
+      }
+
+      input::placeholder {
+        color: #0c0c0c;
+      }
+
+      input:focus, 
+      select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
+      }
+
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #007bff;
+        color: #ffffff;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .button-container {
+        text-align: center;
+      }
+    
+    </style>
+    {% endblock %}
+  <!--</head>
+  <body>-->
+    {% block body %}
     <div class="container">
       <div class="reg">
-        <h2>SIGNUP</h2><br><br>
-        <form>
-          <label for="name">Name :</label><br>
+        <h2>SIGNUP</h2>
+        <form method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="name">Name :</label>
           <input
             type="text"
             id="name"
-              required
-              placeholder="enter your name"
-          /><br /><br />
-          <label for="mail">Email id :</label><br>
+            required
+            placeholder="enter your name"
+            name="name"
+          />
+          <label for="mail">Email id :</label>
           <input
             type="text"
             id="mail"
             required
             placeholder="enter your mail"
-          /><br /><br />
-          <label for="college">college name :</label><br />
+            name="email"
+          />
+          <label for="college">College Name :</label>
           <select class="college" name="college" id="clg" required>
             <option disabled selected>select your college</option>
-            <option>cas</option>
-            <option>NIT</option>
-          </select><br><br>
-          <label for="department">Department :</label><br />
+            {% for i in c %}
+            <option value="{{i.id}}">{{i.college}}</option>
+            {% endfor %}
+          </select>
+          <label for="department">Department :</label>
           <select class="department" name="department" id="dep" required>
             <option disabled selected>select your department</option>
-            <option>computer department</option>
-            <option>commerce department</option>
-          </select><br><br>
+            {% for i in d %}
+            <option value="{{i.id}}">{{i.dep_name}}</option>
+            {% endfor %}
+          </select>
+         
+          <label for="username">Username :</label>
+          <input
+            type="text"
+            id="username"
+            required
+            placeholder="username"
+            name="username"
+          />
+          <label for="password">Password :</label>
+          <input
+            type="password"
+            id="password"
+            required
+            placeholder="password"
+            name="password"
+          />
+          <div class="button-container">
+            <button type="submit" id="submit">Register</button>
+          </div>
         </form>
-        <div class="button-container">
-        <button type="register" id="register">signup</button>
-      </div></div>
+      </div>
     </div>
+    {% endblock %}
   </body>
 </html>

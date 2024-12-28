@@ -5,7 +5,7 @@ from django.urls import path
 from timetable_scheduler_app.views import *
 
 urlpatterns = [
-    path('', HomePage.as_view(), name="home"),
+    path('homedash', HomePage.as_view(), name="home"),
     path('login',LoginPage.as_view(), name="login"),
     path('logout',Logout.as_view(),name="logout"),
     path('reg',RegPage.as_view(),name="reg"),
@@ -39,12 +39,16 @@ urlpatterns = [
     path('deletesem/<int:sem_id>', DeleteSem.as_view(), name='deletesem'),
     path('editsem/<int:sem_id>',EditSem.as_view(),name='editsem'),
     path('studentdash',StudentDash.as_view(),name="student"),
+    path('studreg',StudReg.as_view(),name="studreg"),
     path('studentfeedback',StudentFeedback.as_view(),name="studentfeedback"),
     path('staffreg',StaffReg.as_view(),name="staffreg"),
     path('staffdash',StaffDash.as_view(),name='staffdash'),
     path('accept_staff/<int:staff_id>',Accept_Staff.as_view(),name="accept_staff"),
     path('reject_staff/<int:staff_id>',Reject_Staff.as_view(),name="reject_staff"),
     path('deleteconflict/<int:conflict_id>',DeleteConflict.as_view(),name='deleteconflict'),
+    path('regpage',RegPage.as_view(),name="regpage"),
+    path('',HomeBase.as_view(),name="homebase"),
+
 ]
 
 

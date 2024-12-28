@@ -1,0 +1,68 @@
+{% extends 'home.html' %}
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Choose Registration Type</title>
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color:  rgba(1, 56, 107, 0.8);
+    }
+  -->{% block styles %}
+  <style>
+    
+    .container {
+
+      text-align: center;
+      height:100vh;
+      padding: 80px;
+      border-radius: 0px;
+      background:  rgba(1, 56, 107, 0.8);
+      box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    h1 {
+      font-size: 28px;
+      color: white;
+      margin-bottom: 20px;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      background: #f7f7f8;
+      color: rgb(3, 3, 3);
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0c0c0c;
+      color:white;
+    }
+  </style>
+  {% endblock %}
+<!--</head>
+<body>-->
+{% block body %}
+  <div class="container">
+    <h1>Select Registration Type</h1>
+    <div class="button-container">
+      <a href="{% url 'staffreg' %}"><button>Staff</button></a>
+      <a href="{% url 'studreg' %}"><button>Student</button></a>
+    </div>
+  </div>
+{% endblock %}

@@ -320,6 +320,10 @@ class StudentFeedback(View):
 class StaffDash(View):
      def  get(self,request):
         return render(request,"staff_dashboard.html")
+     
+class StudReg(View):
+    def get(self,request):
+        return render(request,"student_reg.html")
     
 class StaffReg(View):
     def get(self,request):
@@ -351,3 +355,11 @@ class StaffReg(View):
             c = CollegeTable.objects.all()
             d = DepartmentTable.objects.all()
             return render(request, "staff_reg.html", {'c': c, 'd': d, 'errors': s.errors})
+        
+class RegPage(View):
+    def get(self,request):
+        return render(request , 'reg.html')
+    
+class HomeBase(View):
+    def get(self,request):
+        return render(request , 'home_base.html')

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,24 +17,31 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background-color: #003366;
+        background-color: rgba(1, 56, 107, 0.8);
         color: #333;
       }
 
+-->
+{% extends 'home.html' %}
+{%  block styles %}
+<style>
       .container {
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
         height: 100%;
+        background:  rgba(1, 56, 107, 0.8);
+
       }
 
       .reg {
-        background-color: #ffffff;
+        background-color: #e9e6e6;
         padding: 30px;
         border-radius: 8px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         width: 350px;
+        color: black;
       }
 
       h2 {
@@ -42,7 +49,7 @@
         font-weight: bold;
         text-align: center;
         margin-bottom: 20px;
-        color: #444;
+        color: #111111;
       }
 
       label {
@@ -57,16 +64,16 @@
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
+        border-radius: 10px;
+        border: 1px solid #f8f6f6;
         background-color: #f9f9f9;
         font-size: 14px;
-        color: #333;
+        color: #0a0a0a;
         outline: none;
       }
 
       input::placeholder {
-        color: #aaa;
+        color: #0c0c0c;
       }
 
       input:focus, 
@@ -94,9 +101,12 @@
       .button-container {
         text-align: center;
       }
+    
     </style>
-  </head>
-  <body>
+    {% endblock %}
+  <!--</head>
+  <body>-->
+    {% block body %}
     <div class="container">
       <div class="reg">
         <h2>SIGNUP</h2>
@@ -162,5 +172,6 @@
         </form>
       </div>
     </div>
+    {% endblock %}
   </body>
 </html>
