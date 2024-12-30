@@ -17,18 +17,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(
-          135deg,
-          #4a90e2,
-          #003366
-        ); /* Gradient background */
+        background-color: #00509e;
         background-size: cover;
       }
 
       .container {
         width: 100%;
         height: 100%;
-        background: rgba(6, 6, 116, 0.7); /* Semi-transparent blue overlay */
+        background-color: #00509e;    
         backdrop-filter: blur(5px); /* Glassmorphism effect */
         display: flex;
         justify-content: center;
@@ -105,7 +101,7 @@
       button {
         display: inline-block;
         width: 100%;
-        padding: 10px;
+        padding: 9px;
         background-color: #0056b3; /* Medium blue for button */
         color: #ffffff; /* White text */
         border: none;
@@ -119,6 +115,24 @@
       button:hover {
         background-color: #0855a1; /* Darker blue on hover */
       }
+
+      #back {
+    width: 150px;
+    padding: 7px;
+    color: rgb(15, 15, 15);
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    align-self: right;
+    text-align: center;
+    margin-top: 20px;
+    transition: 0.5s;
+  }
+  #back:hover{
+    color: white;
+    background-color: black;
+  }
 
       .scrollable {
         max-height: 150px;
@@ -166,7 +180,9 @@
           ></textarea>
           <button type="submit" id="submit">Submit</button>
         </form>
+        <a href="/staffdash"><button type="button" id="back">back</button></a>
       </div>
-    </div>
+    </div>       
+
   </body>
 </html>

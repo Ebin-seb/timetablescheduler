@@ -1,11 +1,11 @@
-* {
+ * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
-body {
+  body {
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -15,7 +15,7 @@ body {
 }
 
 .container {
-  position: center;
+  position: center; 
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
@@ -38,9 +38,27 @@ th, td {
 
 
 
-button {
-    padding: 3px;
-} 
+button{
+  width: 150px;
+  padding: 7px;
+  color: rgb(15, 15, 15);
+  border: 1px solid black;
+  border-radius: 5px;
+  cursor: pointer;
+  align-self: right;
+  text-align: center;
+  margin-top: 20px;
+  transition: 0.5s;
+}
+
+
+button:hover {
+  background-color: #0d0d0e;
+  color: rgb(247, 238, 238);
+}
+
+
+ 
 #accept {
   width: 50px;
   padding: 7px;

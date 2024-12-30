@@ -13,7 +13,7 @@ class HomePage(View):
         return render(request, "home.html")
 class Logout(View):
     def get(self,request):
-        return render(request,"login.html")
+        return redirect('login')
       
 class LoginPage(View):
     def get(self, request):
