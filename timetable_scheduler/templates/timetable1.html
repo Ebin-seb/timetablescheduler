@@ -1,0 +1,128 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Timetable</title>
+        <style>
+            table {
+                width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: blue;
+            color: rgb(14, 13, 13);
+            padding: 5px;
+            border-radius: 10px;
+        }
+        button:hover{
+            background-color:darkblue;
+            color:white;
+        }
+        </style>
+
+</head>
+<body>
+    <h2>Timetable</h2>
+    
+    <!-- Dropdown for faculty filtering -->
+    <label for="facultyFilter">Filter by faculty:</label>
+    <select id="facultyFilter">
+            <option value="all">All faculties</option>
+            {% for faculty in faculties %}
+            <option value="{{ faculty.id }}">{{ faculty.name }}</option>
+            {% endfor %}
+        </select><br><br>
+        <button id="downloadPdf">Download as PDF</button>
+        
+        <div id="timetable">
+    {% for cls, days_data in timetable_data.items %}
+    <h3>Class: {{ cls.semester_name }}</h3>
+    <table class="timetable">
+        <thead>
+            <tr>
+                <th>Day/Period</th>
+                {% for period in periods %}
+                    <th>Period {{ period }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in days %}
+                <tr>
+                    <td>{{ day }}</td>
+                    {% for period in periods %}
+                        <td class="entry" data-faculty-id="{% with days_data|get_item:day|get_item:period as entry %}{% if entry %}{{ entry.faculty.id }}{% else %}none{% endif %}{% endwith %}">
+                            {% with days_data|get_item:day|get_item:period as entry %}
+                                {% if entry %}
+                                    {{ entry.subject.subject_name }}<br>
+                                    (faculty: {{ entry.faculty.name }})
+                                {% else %}
+                                    Free
+                                    {% endif %}
+                                    {% endwith %}<div id="timetable"></div>
+                                </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+    </table>
+{% endfor %}
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function () {
+        const timetable = document.getElementById('timetable');
+        const options = {
+            margin: 10,
+            filename: 'timetable.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().from(timetable).set(options).save();
+    });
+</script>
+<script>
+    document.getElementById('facultyFilter').addEventListener('change', function () {
+    const selectedFacultyId = this.value;
+    const tables = document.querySelectorAll('.timetable');
+
+    tables.forEach(table => {
+        const rows = table.querySelectorAll('tbody tr');
+
+        rows.forEach(row => {
+            const entries = row.querySelectorAll('.entry');
+
+            entries.forEach(entry => {
+                const facultyId = entry.getAttribute('data-faculty-id');
+                const content = entry.innerHTML.trim(); // Save the content
+                
+                // Check if the entry is associated with the selected faculty
+                if (selectedFacultyId === "all" || facultyId === selectedFacultyId) {
+                    entry.innerHTML = content; // Restore the content if it matches
+                } else {
+                    entry.innerHTML = ""; // Clear the content if it does not match
+                }
+            });
+        });
+    });
+});
+
+</script>
+
+
+
+</body>
+</html>

@@ -42,6 +42,11 @@ class StaffForm(ModelForm):
         model=StaffTable
         fields=['name','college_id','email','department_id','qualification']
 
+class StudentForm(ModelForm):
+    class Meta:
+        model=StudentTable
+        fields=['name','email']
+
 class ConflictForm(ModelForm):
     class Meta:
         model=ConflictTable

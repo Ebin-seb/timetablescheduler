@@ -26,7 +26,7 @@
             <td>{{forloop.counter}}</td>
             <td>{{i.subject_name}}</td>
             <td>{{i.contact_hours}}</td>
-            <td>{{i.staff_id.name}}</td>
+            <td>{{i.staff.name}}</td>
             <td>
               <a href="editsubject/{{ i.id }}">edit</a>
               <a href="deletesubject/{{ i.id }}" onclick="return confirm('are you sure you want to delete')">delete</a>

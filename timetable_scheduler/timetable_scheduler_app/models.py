@@ -31,14 +31,14 @@ class StaffTable(models.Model):
 
 class SubjectTable(models.Model):
     subject_name=models.CharField(max_length=50,blank=True,null=True)
-    contact_hours=models.CharField(max_length=50,blank=True,null=True)
+    contact_hours=models.IntegerField(blank=True,null=True)
     staff=models.ForeignKey(StaffTable,on_delete=models.CASCADE,null=True,blank=True)
 
 class SemesterTable(models.Model):
     login_id=models.ForeignKey(LoginTable,on_delete=models.CASCADE,blank=True,null=True)
     course_id=models.ForeignKey(CourseTable,on_delete=models.CASCADE,null=True,blank=True)
     semester_name=models.CharField(max_length=50,blank=True,null=True)
-    subjects=models.ManyToManyField(SubjectTable)
+    subjects=models.ManyToManyField(SubjectTable,related_name='class1')
 
 @receiver(post_delete, sender=SubjectTable)
 def delete_Classes_with_subject(sender, instance, **kwargs):
@@ -48,8 +48,9 @@ def delete_Classes_with_subject(sender, instance, **kwargs):
 class TimetableEntry(models.Model):
     day=models.CharField(max_length=10)
     period=models.IntegerField()
-    course_id=models.ForeignKey(CourseTable,on_delete=models.CASCADE,blank=True,null=True)
-    staff_id=models.ForeignKey(StaffTable,on_delete=models.CASCADE,blank=True,null=True)
+    cls=models.ForeignKey(SemesterTable,on_delete=models.CASCADE,null=True,blank=True)
+    subject=models.ForeignKey(SubjectTable,on_delete=models.CASCADE,blank=True,null=True)
+    faculty=models.ForeignKey(StaffTable,on_delete=models.CASCADE,blank=True,null=True)
 
 class StudentTable(models.Model):
     login_id=models.ForeignKey(LoginTable,on_delete=models.CASCADE,blank=True,null=True)

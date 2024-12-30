@@ -39,7 +39,7 @@ urlpatterns = [
     path('deletesem/<int:sem_id>', DeleteSem.as_view(), name='deletesem'),
     path('editsem/<int:sem_id>',EditSem.as_view(),name='editsem'),
     path('studentdash',StudentDash.as_view(),name="student"),
-    path('studreg',StudReg.as_view(),name="studreg"),
+    path('studreg',StudentReg.as_view(),name="studreg"),
     path('studentfeedback',StudentFeedback.as_view(),name="studentfeedback"),
     path('staffreg',StaffReg.as_view(),name="staffreg"),
     path('staffdash',StaffDash.as_view(),name='staffdash'),
@@ -48,6 +48,8 @@ urlpatterns = [
     path('deleteconflict/<int:conflict_id>',DeleteConflict.as_view(),name='deleteconflict'),
     path('regpage',RegPage.as_view(),name="regpage"),
     path('',HomeBase.as_view(),name="homebase"),
+    path('timetable',TimetableView.as_view(),name='timetable'),
+    path('generatetimetable',generate_timetable,name='generatetimetable')
 
 ]
 

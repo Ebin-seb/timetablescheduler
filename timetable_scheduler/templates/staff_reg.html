@@ -128,13 +128,6 @@
             placeholder="enter your mail"
             name="email"
           />
-          <label for="college">College Name :</label>
-          <select class="college" name="college" id="clg" required>
-            <option disabled selected>select your college</option>
-            {% for i in c %}
-            <option value="{{i.id}}">{{i.college}}</option>
-            {% endfor %}
-          </select>
           <label for="department">Department :</label>
           <select class="department" name="department" id="dep" required>
             <option disabled selected>select your department</option>

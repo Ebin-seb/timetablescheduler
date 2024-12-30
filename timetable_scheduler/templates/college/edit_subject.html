@@ -23,10 +23,10 @@
           /><br /><br />
           <label for="contact_hours">contact hours :</label>
           <input type="text" id="contact_hours" required name="contact_hours"  value="{{c.contact_hours}}"><br><br>
-          <select name="staff_id" required id="staff">
+          <select name="staff" required id="staff">
             <option value="">Select staff</option>
             {% for j in staff %}
-            <option value="{{j.id}}" {% if j.name == c.staff_id.name %} selected {% endif %}>{{j.name}}</option>
+            <option value="{{j.id}}" {% if j.name == c.staff.name %} selected {% endif %}>{{j.name}}</option>
             {% endfor %}
           </select>
           <button type="register" id="reg">update</button><br />
