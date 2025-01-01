@@ -49,8 +49,9 @@ urlpatterns = [
     path('regpage',RegPage.as_view(),name="regpage"),
     path('',HomeBase.as_view(),name="homebase"),
     path('timetable',TimetableView.as_view(),name='timetable'),
-    path('generatetimetable',generate_timetable,name='generatetimetable')
-
+    path('generatetimetable',generate_timetable,name='generatetimetable'),
+    path('studviewsubject', StudSub.as_view(), name='studviewsubject') ,
+    path('timetable2',StudentTimetable.as_view(),name='timetable2'),
 ]
 
 

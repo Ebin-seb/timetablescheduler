@@ -197,6 +197,13 @@ class ViewSub(View):
 
         return render(request,"college/view_subject.html",{'val':obj})
     
+class StudSub(View):
+    def get(self,request):
+        obj=SubjectTable.objects.all()
+
+        return render(request,"student_viewsub.html",{'val':obj})
+
+    
 class DeleteSub(View):
     def get(self, request,sub_id):
         d = SubjectTable.objects.get(id=sub_id)
@@ -242,8 +249,8 @@ class EditCourse (View):
         c =CourseTable.objects.get(id=course_id)
         dep = DepartmentTable.objects.all()
         return render(request, "college/edit_course.html",{'c':c , 'dep':dep})
-    def post(self,request,sub_id):
-        obj = CourseTable.objects.get(id=sub_id)
+    def post(self,request,course_id):
+        obj = CourseTable.objects.get(id=course_id)
         form=CourseForm(request.POST, instance=obj)
         if form.is_valid():
             form.save()
@@ -320,10 +327,7 @@ class StudentFeedback(View):
 class StaffDash(View):
      def  get(self,request):
         return render(request,"staff_dashboard.html")
-     
-class StudReg(View):
-    def get(self,request):
-        return render(request,"student_reg.html")
+
     
 class StaffReg(View):
     def get(self,request):
@@ -362,21 +366,20 @@ class StudentReg(View):
     def post(self, request):
         s = StudentForm(request.POST)
         if s.is_valid():
-            # Create a LoginTable entry for the staff
+            
             login_obj = LoginTable.objects.create(
                 username=request.POST['username'],
                 password=request.POST['password'],
                 type='student'
             )
             
-            # Save the StaffTable instance without committing to the database
-            staff_instance = s.save(commit=False)
+            student_instance = s.save(commit=False)
             
             # Assign the foreign key `login` to the `login_obj`
-            staff_instance.login = login_obj
+            student_instance.login_id = login_obj
             
             # Save the `StaffTable` instance
-            staff_instance.save()
+            student_instance.save()
             
             return redirect('login')
         else:
@@ -487,7 +490,7 @@ def generate_timetable(request):
                             if slots:
                                 slot = random.choice(slots)
                             else:
-                                print(f"No more available slots for {subject.subject_name} in {cls.name}")
+                                print(f"No more available slots for {subject.subject_name} in {cls.semester_name}")
                                 break  # Exit loop if no slots are available
         
     empty_slots = []
@@ -773,4 +776,36 @@ class TimetableView(View):
             'faculties':faculties
         }
         
+        return render(request, self.template_name, context)
+    
+
+class StudentTimetable(View):
+    template_name = 'timetable2.html'  # Specify your template name here
+
+    def get(self, request, *args, **kwargs):
+        # Get all classes
+        classes = SemesterTable.objects.all()
+        faculties = StaffTable.objects.all()
+
+        # Define the days and periods
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        periods = [1, 2, 3, 4, 5]  # Assuming 5 periods per day
+
+        # Initialize a dictionary to hold timetable data
+        timetable_data = {cls: {day: {period: None for period in periods} for day in days} for cls in classes}
+
+        # Populate the timetable dictionary with entries
+        entries = TimetableEntry.objects.select_related('cls', 'subject', 'faculty').all()
+        for entry in entries:
+            timetable_data[entry.cls][entry.day][entry.period] = entry
+
+        # Adjust the context for the frontend template
+        context = {
+            'timetable_data': timetable_data,
+            'classes': classes,  # To populate the class filter dropdown
+            'days': days,
+            'periods': periods,
+            'faculties': faculties,  # In case faculty filter is also needed
+        }
+
         return render(request, self.template_name, context)

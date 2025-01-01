@@ -79,6 +79,15 @@ body {
  {% block body %}
 
  {% endblock %}
+ <script>
+    // Accordion functionality
+    document.querySelectorAll('.accordion-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const accordionItem = button.parentElement;
+            accordionItem.classList.toggle('active');
+        });
+    });
+</script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-links a');

@@ -152,7 +152,64 @@ body {
         footer a:hover {
             text-decoration: underline;
         }
-    </style>
+       
+/* Keyframes for Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: rgba(1, 56, 107, 0.8); /* Semi-transparent dark blue */
+    animation: slideIn 1.5s ease-out;
+}
+
+.hero h1 {
+    font-size: 3rem;
+    color: #ffffff; /* White */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 2s ease-in-out;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    animation: fadeInUp 2.5s ease-in-out;
+}
+
+.buttons a {
+    display: inline-block;
+    padding: 0.8rem 2rem;
+    margin: 0.5rem;
+    font-size: 1rem;
+    border-radius: 5px;
+    background-color: #00509e; /* Medium blue */
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s;
+    animation: fadeInUp 3s ease-in-out;
+}
+</style>
+
 {% endblock %}
 {% block body %}
 <div class="background"></div>
@@ -233,5 +290,13 @@ body {
         });
     });
 </script>
+<script>
+    // Add an event listener to enhance hero animation interaction
+    document.addEventListener('DOMContentLoaded', () => {
+        const hero = document.querySelector('.hero');
+        hero.style.animation = 'slideIn 1.5s ease-out, fadeInUp 2s ease-in-out';
+    });
+</script>
+
 
 {% endblock %}

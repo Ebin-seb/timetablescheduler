@@ -1,0 +1,110 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Timetable</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            table, th, td {
+                border: 1px solid #ddd;
+            }
+            th, td {
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+            button {
+                background-color: #007bff;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 5px;
+                border: none;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            select {
+                padding: 8px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                margin-bottom: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Timetable</h2>
+
+        <!-- Dropdown for class filtering -->
+        <label for="classFilter">Filter by Class:</label>
+        <select id="classFilter">
+            <option value="all">All Classes</option>
+            {% for cls in classes %}
+            <option value="{{ cls.id }}">{{ cls.semester_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+
+        <!-- Timetable content -->
+        <div id="timetable">
+            {% for cls, days_data in timetable_data.items %}
+            <div class="timetable-section" data-class-id="{{ cls.id }}">
+                <h3>Class: {{ cls.semester_name }}</h3>
+                <table class="timetable">
+                    <thead>
+                        <tr>
+                            <th>Day/Period</th>
+                            {% for period in periods %}
+                                <th>Period {{ period }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for day in days %}
+                            <tr>
+                                <td>{{ day }}</td>
+                                {% for period in periods %}
+                                    <td class="entry">
+                                        {% with days_data|get_item:day|get_item:period as entry %}
+                                            {% if entry %}
+                                                {{ entry.subject.subject_name }}<br>
+                                                (Faculty: {{ entry.faculty.name }})
+                                            {% else %}
+                                                Free
+                                            {% endif %}
+                                        {% endwith %}
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endfor %}
+        </div>
+
+        <script>
+
+            // Filter timetables by class
+            document.getElementById('classFilter').addEventListener('change', function () {
+                const selectedClassId = this.value;
+                const timetableSections = document.querySelectorAll('.timetable-section');
+
+                timetableSections.forEach(section => {
+                    const classId = section.getAttribute('data-class-id');
+                    section.style.display = (selectedClassId === "all" || classId === selectedClassId) ? "" : "none";
+                });
+            });
+        </script>
+    </body>
+</html>
