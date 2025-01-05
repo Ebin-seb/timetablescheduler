@@ -111,5 +111,22 @@ body {
             });
         });
     </script>
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const accordionItem = button.parentElement;
+                accordionItem.classList.toggle('active');
+            });
+        });
+    </script>
+    <script>
+        // Add an event listener to enhance hero animation interaction
+        document.addEventListener('DOMContentLoaded', () => {
+            const hero = document.querySelector('.hero');
+            hero.style.animation = 'slideIn 1.5s ease-out, fadeInUp 2s ease-in-out';
+        });
+    </script>
+    
 </body>
 </html>

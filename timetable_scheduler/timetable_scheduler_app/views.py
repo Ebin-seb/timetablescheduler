@@ -5,7 +5,7 @@ from django.views import View
 
 from timetable_scheduler_app.models import *
 from timetable_scheduler_app.form import *
-from .models import TimetableEntry, SemesterTable
+from .models import *
 
 
 class HomePage(View):
@@ -25,11 +25,11 @@ class LoginPage(View):
             obj=LoginTable.objects.get(username=username,password=password)
             request.session['user_id']=obj.id
             if obj.type=='admin':
-                 return HttpResponse('''<script>alert('Login successfull');window.location='/admindash'</script>''')
-            elif obj.type=='staff':
-                return render(request,'staff_dashboard.html')
+                 return HttpResponse('''<script>alert('Login successfull');window.location='/adminprofile'</script>''')
             elif obj.type=='student':
-                return render(request,'student_dashboard.html')
+                 return HttpResponse('''<script>alert('Login successfull');window.location='/studentprofile'</script>''')
+            elif obj.type=='staff':
+                 return HttpResponse('''<script>alert('Login successfull');window.location='/staffprofile'</script>''')
             else:
                  return HttpResponse('''<script>alert('user type  not recognized');window.location.href='/login';</script>''')
     
@@ -106,11 +106,9 @@ class DeleteConflict(View):
         d.delete()
         return redirect('staffconflict')
         
-    
 class AdminDash(View):
-     def  get(self,request):
+    def get(self, request):
         return render(request,"adminbase.html")
-     
          
      
      
@@ -292,9 +290,24 @@ class EditSem (View):
         return redirect('viewsem')
     
 class Profile(View):
-    def get(self,request):
-        return render(request,'adminbase.html')
-    
+    def get(self, request):
+        # Assume the username is stored in the session after login
+        userid = request.session.get('user_id')
+        print(userid)
+        
+        if userid:
+            # Query the LoginTable to fetch the user's details
+            try:
+                user = CollegeTable.objects.get(login__id=userid)
+                print(user)
+            except LoginTable.DoesNotExist:
+                return redirect('login')  # Redirect to login if user not found
+            
+            # Pass the username to the template
+            return render(request, "adminbase.html", {"username": user})
+        
+        return redirect('login') 
+         
 class DeleteSem(View):
     def get(self, request,sem_id):
         d = SemesterTable.objects.get(id=sem_id)
@@ -326,7 +339,27 @@ class StudentFeedback(View):
 
 class StaffDash(View):
      def  get(self,request):
-        return render(request,"staff_dashboard.html")
+        return render(request,"staff_profile.html")
+     
+class StaffProfile(View):
+    def get(self, request):
+        # Assume the username is stored in the session after login
+        userid = request.session.get('user_id')
+        print(userid)
+        
+        if userid:
+            # Query the LoginTable to fetch the user's details
+            try:
+                name = StaffTable.objects.get(login__id=userid)
+                # email=StaffTable.objects.get()
+                # print(user)
+            except LoginTable.DoesNotExist:
+                return redirect('login')  # Redirect to login if user not found
+            
+            # Pass the username to the template
+            return render(request, "staff_profile.html", {"username": name})
+        
+        return redirect('login') 
 
     
 class StaffReg(View):

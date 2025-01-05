@@ -1,64 +1,75 @@
- * {
+/* General Reset */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
-  body {
-  height: 100vh;
+/* Body Styles */
+body {
+  height: 100vh; /* Full screen height */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; /* Align at the top of the page */
   background: cover;
-  background: url('../images/verify.jpg') no-repeat center center/cover;
+  background-color: rgba(1, 56, 107, 0.8); /* Background color */
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds */
 }
 
+/* Container Styles */
 .container {
-  position: center; 
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px);
+  max-height: 100vh; /* Set the container height to fit the viewport */
+  /* background: rgba(0, 0, 0, 0.5); */
+  /* backdrop-filter: blur(5px); */
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start; 
+  padding-top: 20px; /* Add some space from the top */
+  overflow: auto; /* Enable scrolling within the container if necessary */
 }
 
+/* Table Styles */
 table {
   border-radius: 10px;
-  height: 100px;
   background-color: rgba(223, 198, 198, 0.3);
+  width: 100%; /* Set table width */
+  margin-bottom: 20px; /* Add space below the table */
 }
 
-th, td {
+th,
+td {
   padding: 10px 20px;
-  
+  color: white;
+  text-align: center;
 }
 
+th {
+  background-color: #00509e; /* Dark blue background for the header */
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
 
-
-button{
+button {
   width: 150px;
   padding: 7px;
   color: rgb(15, 15, 15);
   border: 1px solid black;
   border-radius: 5px;
   cursor: pointer;
-  align-self: right;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 10px;
+  margin-bottom: 30px;
   transition: 0.5s;
 }
-
 
 button:hover {
   background-color: #0d0d0e;
   color: rgb(247, 238, 238);
 }
 
-
- 
 #accept {
   width: 50px;
   padding: 7px;
@@ -66,18 +77,15 @@ button:hover {
   border: 1px solid black;
   border-radius: 5px;
   cursor: pointer;
-  text-decoration-color: rgb(27, 27, 27);
   text-align: center;
-  margin-top: 20px;
+  
   transition: 0.5s;
-
 }
 
 #accept:hover {
   background-color: #0ab83e;
 }
 
- 
 #reject {
   width: 50px;
   padding: 7px;
@@ -85,11 +93,9 @@ button:hover {
   border: 1px solid black;
   border-radius: 5px;
   cursor: pointer;
-  text-decoration-color: rgb(27, 27, 27);
   text-align: center;
-  margin-top: 20px;
+  
   transition: 0.5s;
-
 }
 
 #reject:hover {

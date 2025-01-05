@@ -10,6 +10,8 @@ class LoginTable(models.Model):
 
 class CollegeTable(models.Model):
     college=models.CharField(max_length=50,blank=True,null=True)
+    login=models.ForeignKey(LoginTable,on_delete=models.CASCADE,blank=True,null=True)
+
     
 class DepartmentTable(models.Model):
     college_id=models.ForeignKey(CollegeTable,on_delete=models.CASCADE,blank=True,null=True)
