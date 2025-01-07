@@ -187,7 +187,7 @@ class AddSub(View):
         # print(request.POST['staff_id'])
         if form.is_valid():
             form.save()
-            return redirect('viewsubject')
+            return redirect('addsubject')
         
 class ViewSub(View):
     def get(self,request):
@@ -477,7 +477,7 @@ def generate_timetable(request):
             num_slots_to_select = min(len(available_slots), hours_remaining)
             selected_slots = random.sample(available_slots, num_slots_to_select)
         else:
-            print(f"No available SubjectTableslots for subject {subject.name}")
+            print(f"No available SubjectTableslots for subject {subject.subject_name}")
             selected_slots = []  # Ensure selected_slots is defined
 
         # Save selected slots for the subject
@@ -614,11 +614,11 @@ def generate_timetable(request):
                             if hours_remaining == 0:
                                 break  # Exit loop when all hours are assigned
                         else:
-                            print(f"Slot already occupied for subject {subject.name} in class {cls.name} on {entry['day']} period {entry['period']}")
+                            print(f"Slot already occupied for subject {subject.subject_name} in class {cls.name} on {entry['day']} period {entry['period']}")
                     
                     # If the subject is not assigned yet and there are no available slots left, print a message
                     if hours_remaining > 0:
-                        print(f"No available slots for {subject.name} in class {cls.name}")
+                        print(f"No available slots for {subject.subject_name} in class {cls.semester_name}")
     empty_slots = []
     # Calculate empty slots by filtering out occupied ones from the timetable
     for cls in classes:
@@ -734,14 +734,14 @@ def generate_timetable(request):
                     # Ensure the slot is available and not already occupied
                     if not TimetableEntry.objects.filter(day=entry['day'], period=entry['period'], cls=cls, subject=subject).exists():
                         # Check if the faculty is available for this slot
-                        if not TimetableEntry.objects.filter(day=entry['day'], period=entry['period'], faculty=subject.faculty).exists():
+                        if not TimetableEntry.objects.filter(day=entry['day'], period=entry['period'], faculty=subject.staff).exists():
                             # Create a new timetable entry
                             TimetableEntry.objects.create(
                                 day=entry['day'],
                                 period=entry['period'],
                                 cls=entry['cls'],
                                 subject=subject,
-                                faculty=subject.faculty
+                                faculty=subject.staff
                             )
                             hours_remaining -= 1  # Decrease remaining contact hours
                             empty_slots.remove(entry)  # Remove the slot from available slots
@@ -799,6 +799,8 @@ class TimetableView(View):
         # Populate the timetable dictionary with entries
         entries = TimetableEntry.objects.all()
         for entry in entries:
+            if '-' in entry.subject.subject_name:
+                entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
             timetable_data[entry.cls][entry.day][entry.period] = entry
         print(entries)
         # Create a context dictionary for the template
@@ -830,6 +832,8 @@ class StudentTimetable(View):
         # Populate the timetable dictionary with entries
         entries = TimetableEntry.objects.select_related('cls', 'subject', 'faculty').all()
         for entry in entries:
+            if '-' in entry.subject.subject_name:
+                entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
             timetable_data[entry.cls][entry.day][entry.period] = entry
 
         # Adjust the context for the frontend template
