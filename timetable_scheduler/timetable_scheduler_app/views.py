@@ -105,6 +105,12 @@ class DeleteConflict(View):
         d=ConflictTable.objects.get(id=conflict_id)
         d.delete()
         return redirect('staffconflict')
+    
+class AdminDeleteConflict(View):
+    def get(self,request,conflict_id):
+        d=ConflictTable.objects.get(id=conflict_id)
+        d.delete()
+        return redirect('conflictview')
         
 class AdminDash(View):
     def get(self, request):
@@ -307,6 +313,35 @@ class Profile(View):
             return render(request, "adminbase.html", {"username": user})
         
         return redirect('login') 
+    
+class StaffEditProfile(View):
+    def get(self,request,prof_id):
+        obj=StaffTable.objects.get(id=prof_id)
+        dep=DepartmentTable.objects.all()
+        return render(request,"staff_editprofile.html",{'obj':obj,'dep':dep})
+    def post(self, request, prof_id):
+        obj = StaffTable.objects.get(id=prof_id)
+        dep = DepartmentTable.objects.all()
+        obj.name = request.POST.get('name')
+        obj.email = request.POST.get('email')
+        obj.qualification = request.POST.get('qualification')
+        department_id = request.POST.get('department_id')
+        try:
+            department = DepartmentTable.objects.get(id=department_id)
+            obj.department_id = department
+        except DepartmentTable.DoesNotExist:
+            return render(request, "staff_editprofile.html", {
+                'obj': obj,
+                'dep': dep,
+                'error': 'Invalid department selected'
+            })
+        obj.save()
+        return render(request, "staff_editprofile.html", {
+            'obj': obj,
+            'dep': dep,
+            'success': 'Profile updated successfully!'
+        })
+
          
 class DeleteSem(View):
     def get(self, request,sem_id):
@@ -846,3 +881,8 @@ class StudentTimetable(View):
         }
 
         return render(request, self.template_name, context)
+
+
+class TimetablePage(View):
+    def get(self,request):
+        return render(request , "createtimetable.html")

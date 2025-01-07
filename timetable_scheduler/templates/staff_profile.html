@@ -72,14 +72,8 @@
             <p><strong>Qualification:</strong> {{username.qualification}}</p>
             <p><strong>Department:</strong> {{username.department_id.dep_name}}</p>
         </div>
-        <button class="edit-button" onclick="editProfile()">Edit Profile</button>
+        <a href="staffeditprofile/{{ username.id }}"><button class="edit-button" >Edit Profile</button></a>
     {% endif %}
 </div>
 
-<script>
-    function editProfile() {
-        // Redirect to the edit profile page or open a modal
-        window.location.href = '/edit-profile'; // Adjust the URL to your edit profile route
-    }
-</script>
 {% endblock %}

@@ -101,3 +101,14 @@ button:hover {
 #reject:hover {
   background-color: #eb2323;
 }
+
+td a {
+  text-decoration: none;
+  color: #0e0d0d; /* Medium blue link */
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+td a:hover {
+  color: #d81323; /* Darker blue on hover */
+}

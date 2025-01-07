@@ -46,13 +46,16 @@ urlpatterns = [
     path('accept_staff/<int:staff_id>',Accept_Staff.as_view(),name="accept_staff"),
     path('reject_staff/<int:staff_id>',Reject_Staff.as_view(),name="reject_staff"),
     path('deleteconflict/<int:conflict_id>',DeleteConflict.as_view(),name='deleteconflict'),
+    path('admindeleteconflict/<int:conflict_id>',AdminDeleteConflict.as_view(),name='deleteconflict'),
     path('regpage',RegPage.as_view(),name="regpage"),
     path('',HomeBase.as_view(),name="homebase"),
     path('timetable',TimetableView.as_view(),name='timetable'),
+    path('createtimetable',TimetablePage.as_view(),name='createtimetable'),
     path('generatetimetable',generate_timetable,name='generatetimetable'),
     path('studviewsubject', StudSub.as_view(), name='studviewsubject') ,
     path('timetable2',StudentTimetable.as_view(),name='timetable2'),
     path('staffprofile',StaffProfile.as_view(),name='staffprofile'),
+    path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
 
 ]
 

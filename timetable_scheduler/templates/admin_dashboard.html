@@ -187,33 +187,6 @@
         }
     </style>
     {% block styles %}{% endblock %}
-   <script>
-    // Countdown Timer for 6 Months
-    document.addEventListener("DOMContentLoaded", function () {
-        const countdownElement = document.getElementById("countdown");
-
-        function updateCountdown() {
-            const now = new Date();
-            const sixMonthsLater = new Date();
-            sixMonthsLater.setMonth(sixMonthsLater.getMonth() + 6); // Add 6 months
-
-            const timeRemaining = sixMonthsLater - now;
-
-            if (timeRemaining > 0) {
-                const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-
-                countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            } else {
-                countdownElement.textContent = "The 6-month timer has ended!";
-            }
-        }
-
-        setInterval(updateCountdown, 1000);
-    });
-</script>
 
 </head>
 
@@ -237,7 +210,7 @@
                 <li><a href="/adminprofile">Profile</a></li>
                 <li><a href="/verifystaff">Verify Staff</a></li>
                 <li><a href="/add">Add </a></li>
-                <li><a href="/generatetimetable">Create Timetable</a></li>
+                <li><a href="/createtimetable">Create Timetable</a></li>
                 <li><a href="/timetable">View and Export timetable</a></li>
                 <li><a href="/conflictview">View Conflict</a></li>
                 <li><a href="/viewfeedback">View Feedback</a></li>
