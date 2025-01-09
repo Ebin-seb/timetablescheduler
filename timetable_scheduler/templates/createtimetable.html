@@ -1,51 +1,56 @@
-
 {% extends 'admin_dashboard.html' %}
 {% block styles %}
 <style>
-        .button-container {
-            width:70%;
-            height:100vh;
-            background-color: f0f8ff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
+    .button-container {
+        width: 70%;
+        height: 100vh;
+        background-color: #f0f8ff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
 
-        h1 {
-            color: #333;
-        }
+    h1 {
+        color: #333;
+    }
 
-        .create-timetable-button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
+    .create-timetable-button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
 
-        .create-timetable-button:hover {
-            background-color: #0056b3;
-        }
+    .create-timetable-button:hover {
+        background-color: #0056b3;
+    }
 
-        .message {
-            margin-top: 20px;
-            font-size: 18px;
-            color: #28a745;
-        }
-    </style>
-    {% endblock %}
-
-{% block body %}
-
-<div class="button-container">
-    <h1>Create Timetable</h1>
-   <a href="/generatetimetable"> <button class="create-timetable-button" id="createTimetableButton">Create Timetable</button></a>
-    <div id="message" class="message"> click the button to create timetable ! </div>
-</div>
-
+    .message {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #28a745;
+    }
+</style>
 {% endblock %}
 
+{% block body %}
+<div class="button-container">
+    <form method="post" action="/generatetimetable">
+        {% csrf_token %}
+        <h1>Create Timetable</h1>
+        <label for="semesterType">Select Semester Type:</label>
+        <select id="semesterType" name="semestertype">
+            <option value="all">All Semesters</option>
+            <option value="odd">Odd Semesters</option>
+            <option value="even">Even Semesters</option>
+        </select><br><br>
+        <button type="submit" class="create-timetable-button" id="createTimetableButton">Create Timetable</button>
+        <div id="message" class="message">Click the button to create a timetable!</div>
+    </form>
+</div>
+{% endblock %}

@@ -290,7 +290,7 @@ class EditSem (View):
     def post(self,request,sem_id):
         c = SemesterTable.objects.get(id=sem_id)
         c.semester_name=request.POST.get('semester_name')
-        c.save
+        c.save()
         selected_subjects = request.POST.getlist('subjects')
         c.subjects.set(selected_subjects)
         return redirect('viewsem')
@@ -474,9 +474,17 @@ from random import shuffle
 from django.views import View
 def generate_timetable(request):
     #delete all timetable entries
+
     TimetableEntry.objects.all().delete()
     # Get all classes
+   
     classes = SemesterTable.objects.all()
+
+    # semester_type = request.POST.get('semester_type', 'all')
+    # if semester_type == 'odd':
+    #     classes = classes.filter(semester_name__endswith='1')  # Filter odd semesters
+    # elif semester_type == 'even':
+    #     classes = classes.filter(semester_name__endswith='2')
     
     # Define the days and periods
     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']

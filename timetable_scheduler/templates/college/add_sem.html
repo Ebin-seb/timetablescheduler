@@ -21,7 +21,7 @@
             name="semester_name"
           /><br /><br />
           <label for="subjects">subjects :</label>
-          <select name="subjects" required id="sub" multiple>
+          <select name="subjects" required id="sub" multiple style="width: 300px; height: 250px;">
             <option value="subject_id">Select subjects</option>
             {% for i in k %}
             <option value="{{i.id}}">{{i.subject_name}}</option>
