@@ -54,6 +54,7 @@
             {% endfor %}
         </select><br><br>
 
+        <button id="downloadPdf">Download as PDF</button>
 
         <!-- Timetable content -->
         <div id="timetable">
@@ -92,8 +93,22 @@
             </div>
             {% endfor %}
         </div>
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
         <script>
+            document.getElementById('downloadPdf').addEventListener('click', function () {
+                const timetable = document.getElementById('timetable');
+                const options = {
+                    margin: 10,
+                    filename: 'timetable.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+                html2pdf().from(timetable).set(options).save();
+            });
+        </script>
+        
+  <script>
 
             // Filter timetables by class
             document.getElementById('classFilter').addEventListener('change', function () {

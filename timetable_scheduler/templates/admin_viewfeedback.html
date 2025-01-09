@@ -52,6 +52,28 @@
             border: 1px solid #080808;
             padding: 20px;
         }      
+
+        .deletebutton {
+  width: 120px;
+  padding: 7px;
+  color: rgb(236, 225, 225);
+  border: 1px solid black;
+  background-color: red;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left:40%;
+  transition: 0.5s;
+  
+}
+
+button:hover {
+  background-color: #0d0d0e;
+  color: rgb(247, 238, 238);
+}
+
       
 </style>      
 {% endblock %}
@@ -60,10 +82,11 @@
     {% block body %}
     <div class="feedback-container">
       <div class="table">
-        <form action="" method="post">
-        <table>
-          <tr>
-            <th>name</th>
+        <form action="{% url 'deleteall' %}" method="post">
+          {% csrf_token %}
+          <table>
+            <tr>
+              <th>name</th>
             <th>feedback</th>
             <th>submitted at</th>
           </tr>
@@ -74,10 +97,12 @@
                 <td>{{ i.submitted_at }}</td>
             </tr>
             {% endfor %}
-        </table>
-
-
-      </form>
+            
+          </table>
+          
+          
+          <button type="submit" class="deletebutton" onclick="confirm('are you sure want to delete')">Delete all</button>
+        </form>
       </div>
     </div>
     {% endblock %}

@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.urls import path
 
+from timetable_scheduler_app import views
 from timetable_scheduler_app.views import *
 
 urlpatterns = [
@@ -56,6 +57,7 @@ urlpatterns = [
     path('timetable2',StudentTimetable.as_view(),name='timetable2'),
     path('staffprofile',StaffProfile.as_view(),name='staffprofile'),
     path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
+    path('deleteall/deleteall/',DeleteAll,name='deleteall'),
 
 ]
 

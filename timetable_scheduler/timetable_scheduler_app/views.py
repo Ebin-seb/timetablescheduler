@@ -886,3 +886,10 @@ class StudentTimetable(View):
 class TimetablePage(View):
     def get(self,request):
         return render(request , "createtimetable.html")
+    
+def DeleteAll(request):
+    if request.method == "POST":
+        # Delete all objects from the model
+        FeedbackTable.objects.all().delete()
+      
+    return redirect('viewfeedback')
