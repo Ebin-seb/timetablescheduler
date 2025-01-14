@@ -22,8 +22,9 @@
           /><br /><br />
           <label for="contact_hours">contact hours :</label>
           <input type="text" id="contact_hours" required name="contact_hours"><br><br>
-          <select name="staff" required id="staff">
-            <option value="">Select staff</option>
+          <label for="staff">Staff:</label>
+          <select name="staff"  id="staff">
+            <option value="">not assigned</option>
             {% for i in v %}
             <option value="{{i.id}}">{{i.name}}</option>
             {% endfor %}

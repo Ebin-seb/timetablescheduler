@@ -58,6 +58,7 @@
 
        
         <button id="downloadPdf">Download as PDF</button>
+        <button id="exportExcel">Export as Excel</button>
         
         <div id="timetable">
     {% for cls, days_data in timetable_data.items %}
@@ -94,6 +95,7 @@
 {% endfor %}
 </div>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
 <script>
     document.getElementById('downloadPdf').addEventListener('click', function () {
@@ -108,35 +110,49 @@
         html2pdf().from(timetable).set(options).save();
     });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-    document.getElementById('facultyFilter').addEventListener('change', function () {
-    const selectedFacultyId = this.value;
-    const tables = document.querySelectorAll('.timetable');
+    document.getElementById('exportExcel').addEventListener('click', function () {
+        const timetableDiv = document.getElementById('timetable'); // Get all timetable data
+        const tables = timetableDiv.querySelectorAll('.timetable'); // Select all timetable tables
+        const workbook = XLSX.utils.book_new(); // Create a new workbook
+        const allData = []; // Array to store all timetable data
 
-    tables.forEach(table => {
-        const rows = table.querySelectorAll('tbody tr');
+        // Create a header row for the single sheet
+        const header = ['Class', 'Day', 'Period', 'Subject', 'Faculty'];
+        allData.push(header); // Push the header row
 
-        rows.forEach(row => {
-            const entries = row.querySelectorAll('.entry');
+        // Loop through each timetable table and extract data
+        tables.forEach((table) => {
+            const className = table.previousElementSibling.textContent.trim(); // Get class name
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+            
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll('td'); // Get cells in the row
+                const day = cells[0].textContent.trim(); // Day
+                const periods = cells.length > 1 ? cells.length - 1 : 0; // Number of periods
 
-            entries.forEach(entry => {
-                const facultyId = entry.getAttribute('data-faculty-id');
-                const content = entry.innerHTML.trim(); // Save the content
-                
-                // Check if the entry is associated with the selected faculty
-                if (selectedFacultyId === "all" || facultyId === selectedFacultyId) {
-                    entry.innerHTML = content; // Restore the content if it matches
-                } else {
-                    entry.innerHTML = ""; // Clear the content if it does not match
+                // Loop through each period and gather the subject and faculty data
+                for (let i = 1; i <= periods; i++) {
+                    const subject = cells[i].textContent.trim() || 'Free'; // Subject or 'Free' if empty
+                    const faculty = subject !== 'Free' ? cells[i].querySelector('div').textContent.trim().split(': ')[1] : 'N/A'; // Faculty name
+
+                    // Add the data for this row
+                    allData.push([className, day, `Period ${i}`, subject, faculty]);
                 }
             });
         });
+
+        // Convert allData to a worksheet
+        const worksheet = XLSX.utils.aoa_to_sheet(allData); 
+
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Timetable'); 
+
+        // Download the Excel file
+        XLSX.writeFile(workbook, 'combined_timetable.xlsx');
     });
-});
-
 </script>
-
-
 
 </body>
 </html>

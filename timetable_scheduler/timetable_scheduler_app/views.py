@@ -262,19 +262,23 @@ class EditCourse (View):
 
 
 class AddSem(View):
-     def  get(self,request):
+    def  get(self,request):
         c = CourseTable.objects.all()
         d = SubjectTable.objects.all()
         return render(request,"college/add_sem.html",{'v':c,'k':d})
-     def post(self,request):
-        form=Semform(request.POST)
+    def post(self, request):
+        form = Semform(request.POST)
+
         if form.is_valid():
             semester = form.save(commit=False)
-            semester.save()
-            # Save ManyToManyField after saving the instance
+             # Handling the 'is_odd' field manually from the radio buttons
+            is_odd = request.POST.get('is_odd') == 'True'  # Convert 'True'/'False' to boolean
+            semester.is_odd = is_odd  # Set the 'is_odd' field based on the selected radio button
+            semester.save()  # Save the semester instance
             form.save_m2m()
-            return redirect('viewsem')
-        
+
+            return redirect('viewsem') 
+
 
 class ViewSem(View):
     def get(self,request):
@@ -285,8 +289,9 @@ class EditSem (View):
     def get(self, request,sem_id):
         c =SemesterTable.objects.get(id=sem_id)
         sub = SubjectTable.objects.all()
+        selected_sub=c.subjects.all()
         co=CourseTable.objects.all()
-        return render(request, "college/edit_sem.html",{'c':c , 'sub':sub ,'co':co})
+        return render(request, "college/edit_sem.html",{'c':c , 'sub':sub ,'co':co , 'selected_sub':selected_sub})
     def post(self,request,sem_id):
         c = SemesterTable.objects.get(id=sem_id)
         c.semester_name=request.POST.get('semester_name')
@@ -472,20 +477,18 @@ from .models import CourseTable, SubjectTable, TimetableEntry
 import random
 from random import shuffle
 from django.views import View
+
+
 def generate_timetable(request):
     #delete all timetable entries
 
     TimetableEntry.objects.all().delete()
     # Get all classes
    
+    
     classes = SemesterTable.objects.all()
 
-    # semester_type = request.POST.get('semester_type', 'all')
-    # if semester_type == 'odd':
-    #     classes = classes.filter(semester_name__endswith='1')  # Filter odd semesters
-    # elif semester_type == 'even':
-    #     classes = classes.filter(semester_name__endswith='2')
-    
+   
     # Define the days and periods
     days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     periods = [1, 2, 3, 4, 5]  # Assuming 5 periods per day
@@ -701,7 +704,7 @@ def generate_timetable(request):
             if slot_key in occupied_slots:
                 # Conflict found: faculty is already assigned in this slot
                 conflicting_entry = occupied_slots[slot_key]
-                # print(f"Conflict found: faculty {faculty} is scheduled for both {conflicting_entry.subject.name} and {entry.subject.name} on {entry.day}, period {entry.period}.")
+                print(f"Conflict found: faculty {faculty} is scheduled for both {conflicting_entry.subject.subject_name} and {entry.subject.subject_name} on {entry.day}, period {entry.period}.")
                 
                 # Try to reassign one of the subjects (you can choose which one to reassign)
                 reassign_entry = entry  # For example, reassign the current entry
@@ -792,7 +795,7 @@ def generate_timetable(request):
                     # Exit loop when all hours for this subject are assigned
                     if hours_remaining == 0:
                         break
-    return HttpResponse("Timetable generated successfully!")        
+    return redirect('timetable')        
 
 # from django.shortcuts import render
 # from .models import TimetableEntry, CourseTable
@@ -829,7 +832,11 @@ class TimetableView(View):
 
     def get(self, request, *args, **kwargs):
         # Get all classes
+        
+
+
         classes = SemesterTable.objects.all()
+    
         faculties= StaffTable.objects.all()
         
         # Define the days and periods
@@ -840,7 +847,7 @@ class TimetableView(View):
         timetable_data = {cls: {day: {period: None for period in periods} for day in days} for cls in classes}
 
         # Populate the timetable dictionary with entries
-        entries = TimetableEntry.objects.all()
+        entries = TimetableEntry.objects.filter(cls__in=classes)    
         for entry in entries:
             if '-' in entry.subject.subject_name:
                 entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
@@ -894,6 +901,7 @@ class StudentTimetable(View):
 class TimetablePage(View):
     def get(self,request):
         return render(request , "createtimetable.html")
+   
     
 def DeleteAll(request):
     if request.method == "POST":
@@ -901,3 +909,7 @@ def DeleteAll(request):
         FeedbackTable.objects.all().delete()
       
     return redirect('viewfeedback')
+
+
+
+

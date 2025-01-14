@@ -13,7 +13,6 @@
       <div class="box">
         <form method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <label for="semester">semester :</label>
           <input
             type="text"
             id="semester"
@@ -21,11 +20,15 @@
             name="semester_name"
             value="{{c.semester_name}}"
           /><br /><br />
+         
+          
           <label for="subjects">subjects :</label>
           <select name="subjects" required id="sub" multiple style="width: 300px; height: 250px;">
             <option value="subject_id">Select subjects</option>
             {% for i in sub %}
-            <option value="{{i.id}}" {% if i.id in c.subjects %}selected{% endif %}>{{i.subject_name}}</option>
+            <option value="{{i.id}}" {% if i in selected_sub %}
+            selected
+        {% endif %}>{{i.subject_name}}</option>
             {% endfor %}
           </select>
           <label for="course">course :</label>

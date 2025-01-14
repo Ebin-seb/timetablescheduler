@@ -34,7 +34,7 @@ body {
 /* Table Styles */
 table {
   border-radius: 10px;
-  background-color: rgba(223, 198, 198, 0.3);
+  background-color: rgba(194, 188, 255, 0.3);
   width: 100%; /* Set table width */
   margin-bottom: 20px; /* Add space below the table */
 }
@@ -51,6 +51,12 @@ th {
   position: sticky;
   top: 0;
   z-index: 1;
+}
+
+tr:hover {
+  background-color: #2709ac; /* Highlight color */
+  color: white; /* Text color change */
+  cursor: pointer;
 }
 
 button {
