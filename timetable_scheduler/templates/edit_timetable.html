@@ -1,0 +1,211 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Timetable</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        select  {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #e8e7ee;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #e8e7ee;
+            background-color: blue;
+            color:white;
+            margin-bottom: 15px;
+        }
+        button:hover{
+            color:white
+        }
+        .conflict {
+            background-color: #ffdddd !important; /* Highlight conflicting cells */
+        }
+    </style>
+</head>
+<body>
+    <h2>Edit Timetable</h2>
+
+    <form id="editTimetableForm">
+        {% csrf_token %}
+        {% for cls, days_data in timetable_data.items %}
+            <h3>Class: {{ cls.semester_name }}</h3>
+            <table class="timetable">
+                <thead>
+                    <tr>
+                        <th>Day/Period</th>
+                        {% for period in periods %}
+                            <th>Period {{ period }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for day in days %}
+                        <tr>
+                            <td>{{ day }}</td>
+                            {% for period in periods %}
+                                {% with days_data|get_item:day|get_item:period as entry %}
+                                    <td class="timetable-cell" data-class="{{ cls.id }}" data-day="{{ day }}" data-period="{{ period }}">
+                                        <!-- Subject Dropdown -->
+                                        <select name="subject_{{ cls.id }}_{{ day }}_{{ period }}" class="subject-select" data-faculty-select="faculty_{{ cls.id }}_{{ day }}_{{ period }}">
+                                            <option value="">Free</option>
+                                            {% for subject in cls.subjects.all %}
+                                                <option value="{{ subject.id }}" data-faculty="{{ subject.staff.id }}" {% if entry and entry.subject.id == subject.id %}selected{% endif %}>
+                                                    {{ subject.subject_name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+
+                                        <!-- Faculty Dropdown -->
+                                        <select name="faculty_{{ cls.id }}_{{ day }}_{{ period }}" id="faculty_{{ cls.id }}_{{ day }}_{{ period }}">
+                                            <option value="">None</option>
+                                            {% for faculty in faculties %}
+                                            <option value="{{ faculty.id }}" {% if entry and entry.faculty.id == faculty.id %}selected{% endif %}>
+                                                {{ faculty.name }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                        
+                                        <!-- Display existing subject & faculty -->
+                                        {% if entry %}
+                                        <p><strong>Current:</strong> {{ entry.subject.subject_name }} ({{ entry.faculty.name }})</p>
+                                        {% endif %}
+                                    </td>
+                                    {% endwith %}
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endfor %}
+                        <br><br>
+                        <button type="submit">Save Timetable</button>
+                        <button type="button" id="forceUpdateBtn">Force Update</button>
+                    </form>
+                    
+                    
+    <script>
+        document.querySelectorAll('.subject-select').forEach(subjectSelect => {
+            subjectSelect.addEventListener('change', function () {
+                const selectedOption = this.options[this.selectedIndex];
+                const facultyId = selectedOption.getAttribute('data-faculty');
+                const facultySelectId = this.getAttribute('data-faculty-select');
+                const facultySelect = document.getElementById(facultySelectId);
+                
+                if (facultyId) {
+                    facultySelect.value = facultyId;
+                } else {
+                    facultySelect.value = "";
+                }
+            });
+        });
+
+        function saveTimetable(forceUpdate = false) {
+            const formData = new FormData(document.getElementById('editTimetableForm'));
+            const updatedTimetable = {};
+            formData.forEach((value, key) => {
+                updatedTimetable[key] = value;
+            });
+
+            fetch('/save_timetable/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ timetable: updatedTimetable, force_update: forceUpdate })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.conflicts.length > 0 && !forceUpdate) {
+                    alert("Conflicts detected! Click 'Force Update' to override.");
+                    highlightConflicts(data.conflicts);
+                } else {
+                    alert('Timetable updated successfully!');
+                    location.reload();
+                }
+            })
+            .catch(error => alert('Error updating timetable'));
+        }
+
+        function highlightConflicts(conflicts) {
+            document.querySelectorAll('.timetable-cell').forEach(cell => {
+                cell.classList.remove('conflict');
+            });
+
+            conflicts.forEach(conflict => {
+                const cell = document.querySelector(`[data-class="${conflict.class_id}"][data-day="${conflict.day}"][data-period="${conflict.period}"]`);
+                if (cell) {
+                    cell.classList.add('conflict');
+                }
+            });
+        }
+
+        document.getElementById('editTimetableForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveTimetable(false);
+        });
+
+        document.getElementById('forceUpdateBtn').addEventListener('click', function() {
+            if (confirm("Are you sure you want to override all conflicts?")) {
+                saveTimetable(true);
+            }
+        });
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+    
+    function saveTimetable(forceUpdate = false) {
+        const formData = new FormData(document.getElementById('editTimetableForm'));
+        const updatedTimetable = {};
+        
+        formData.forEach((value, key) => {
+            updatedTimetable[key] = value;
+        });
+    
+        fetch('/save_timetable/', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()  // Send CSRF token
+            },
+            body: JSON.stringify({ timetable: updatedTimetable, force_update: forceUpdate })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "conflict" && !forceUpdate) {
+                alert("Conflicts detected! Click 'Force Update' to override.");
+                highlightConflicts(data.conflicts);
+            } else if (data.status === "success") {
+                alert("Timetable updated successfully!");
+                location.reload();
+            } else {
+                alert("Error: " + data.message);
+            }
+        })
+        .catch(error => console.error('Fetch error:', error));
+    }
+</script>
+    
+</body>
+</html>

@@ -58,8 +58,9 @@
 
        
         <button id="downloadPdf">Download as PDF</button>
-        <button id="exportExcel">Export as Excel</button>
-        
+        <button id="exportExcel">Export To excel</button>
+        <button onclick="window.location.href='/edit_timetable/'">Edit Timetable</button>
+
         <div id="timetable">
     {% for cls, days_data in timetable_data.items %}
     <h3>Class: {{ cls.semester_name }}</h3>
@@ -109,8 +110,10 @@
         };
         html2pdf().from(timetable).set(options).save();
     });
+    
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script>
     document.getElementById('exportExcel').addEventListener('click', function () {
         const timetableDiv = document.getElementById('timetable'); // Get all timetable data
@@ -151,6 +154,22 @@
 
         // Download the Excel file
         XLSX.writeFile(workbook, 'combined_timetable.xlsx');
+    });
+   </script>
+   <script>
+    document.getElementById("facultyFilter").addEventListener("change", function() {
+        let selectedFaculty = this.value; // Get selected faculty ID
+        let entries = document.querySelectorAll(".entry"); // Get all timetable entries
+
+        entries.forEach(entry => {
+            let facultyId = entry.getAttribute("data-faculty-id");
+
+            if (selectedFaculty === "all" || facultyId === selectedFaculty) {
+                entry.style.display = ""; // Show entry
+            } else {
+                entry.style.display = "none"; // Hide entry
+            }
+        });
     });
 </script>
 

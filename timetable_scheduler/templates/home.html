@@ -1,9 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Time Table Scheduler</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/apple-touch-icon.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
 
@@ -69,9 +72,10 @@ body {
             <a href="/">Time Table Scheduler</a>
         </div>
         <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="regpage">Register</a>
-            <a href="/login">Login</a>
+            <a href="/"><i class="fa-solid fa-house" style="color: rgb(240, 243, 240); font-size: 15px;"></i>
+                Home</a>
+            <a href="regpage"><i class="fa-solid fa-user-plus" style="color: rgb(244, 250, 244); font-size: 15px;"></i> Register</a>
+            <a href="/login"><i class="fa-solid fa-right-to-bracket" style="color: rgb(243, 240, 240); font-size: 15px;"></i> Login</a>
         </div>
     </div>
 

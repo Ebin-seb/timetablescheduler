@@ -5,6 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <title>Admin Panel - Profile</title>
     <style>
         body {
@@ -280,20 +282,20 @@
            
         </div>
         <div class="navbar-right">
-            <a href="/">Home</a>
-            <a href="/logout">Logout</a>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </div>
     <div class="body">
         <nav class="sidebar">
             <div class="head">
-                <h2>STAFF</h2>
+                <h2><i class="fa-solid fa-user-graduate"></i> STAFF</h2>
             </div>
             <ul class="nav">
-                <li><a href="/staffprofile">Profile</a></li>
-                <li><a href="/timetable">view timetable</a></li>
-                <li><a href="/viewalloc">view subject allocations</a></li>
-                <li><a href="/staffconflict">raise conflict</a></li>
+                <li><a href="/staffprofile"><i class="fas fa-user"></i>  Profile</a></li>
+                <li><a href="/timetable"><i class="fas fa-eye"></i>  view timetable</a></li>
+                <li><a href="/staffconflict"><i class="fa-solid fa-clock"></i>  raise conflict</a></li>
+                <li><a href="/viewalloc"><i class="fa-solid fa-right-left"></i>  view subject allocations</a></li>
             </ul>
         </nav>
         {% block body %}

@@ -202,10 +202,19 @@ class ViewSub(View):
         return render(request,"college/view_subject.html",{'val':obj})
     
 class StudSub(View):
-    def get(self,request):
-        obj=SubjectTable.objects.all()
+    def get(self, request):
+        semester_id = request.GET.get('semester_id')  # Get semester ID from request
 
-        return render(request,"student_viewsub.html",{'val':obj})
+        if semester_id:
+            semester = SemesterTable.objects.get(id=semester_id)
+            subjects = semester.subjects.all()  # Get subjects linked to the semester
+        else:
+            subjects = SubjectTable.objects.all()  # Show all subjects if no semester is selected
+
+        semesters = SemesterTable.objects.all()  # Fetch all semesters for dropdown
+
+        return render(request, "student_viewsub.html", {'val': subjects, 'semesters': semesters})
+
 
     
 class DeleteSub(View):
@@ -400,6 +409,24 @@ class StaffProfile(View):
             return render(request, "staff_profile.html", {"username": name})
         
         return redirect('login') 
+
+class StudentProfile(View):
+    def get(self, request):
+        # Assume the user is logged in and their ID is available in session
+        userid = request.session.get('user_id')
+        
+        if userid:
+            # Query the StudentTable to fetch the student's details using the login_id (foreign key)
+            try:
+                student = StudentTable.objects.get(login_id__id=userid)
+            except StudentTable.DoesNotExist:
+                return redirect('login')  # Redirect to login if student not found
+            
+            # Pass the student's data to the template
+            return render(request, "student_profile.html", {"student": student})
+        
+        # Redirect to login if the user is not authenticated or no session exists
+        return redirect('login')
 
     
 class StaffReg(View):
@@ -909,6 +936,97 @@ def DeleteAll(request):
         FeedbackTable.objects.all().delete()
       
     return redirect('viewfeedback')
+
+
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from .models import TimetableEntry, SemesterTable, StaffTable, SubjectTable
+
+def get_timetable_data():
+    classes = SemesterTable.objects.all()
+    faculties = StaffTable.objects.all()
+    days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    periods = [1, 2, 3, 4, 5]  
+
+    timetable_data = {cls: {day: {period: None for period in periods} for day in days} for cls in classes}
+
+    entries = TimetableEntry.objects.filter(cls__in=classes)
+    for entry in entries:
+        timetable_data[entry.cls][entry.day][entry.period] = entry
+
+    return {
+        'timetable_data': timetable_data,
+        'days': days,
+        'periods': periods,
+        'classes': classes,
+        'faculties': faculties
+    }
+
+def edit_timetable(request):
+    context = get_timetable_data()
+    return render(request, 'edit_timetable.html', context)
+
+from django.http import JsonResponse
+from .models import TimetableEntry, SemesterTable, StaffTable, SubjectTable
+import json
+
+def save_timetable(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            updated_timetable = data.get("timetable", {})
+            force_update = data.get("force_update", False)
+
+            conflicts = []
+            existing_entries = TimetableEntry.objects.all()
+
+            for key, value in updated_timetable.items():
+                parts = key.split("_")
+                if len(parts) == 4:
+                    _, cls_id, day, period = parts
+                    subject_id = updated_timetable.get(f"subject_{cls_id}_{day}_{period}")
+                    faculty_id = updated_timetable.get(f"faculty_{cls_id}_{day}_{period}")
+
+                    if subject_id and faculty_id:
+                        subject = SubjectTable.objects.get(id=int(subject_id))
+                        faculty = StaffTable.objects.get(id=int(faculty_id))
+
+                        # Check for existing entry
+                        entry = TimetableEntry.objects.filter(cls_id=int(cls_id), day=day, period=int(period)).first()
+
+                        if entry:
+                            # Conflict check (only if not force updating)
+                            if not force_update:
+                                conflict_entry = TimetableEntry.objects.filter(day=day, period=int(period), faculty=faculty).exclude(cls_id=int(cls_id)).first()
+                                if conflict_entry:
+                                    conflicts.append({
+                                        "class_id": cls_id,
+                                        "day": day,
+                                        "period": period
+                                    })
+                                    continue  # Skip saving to prevent overwrite
+
+                            # Update existing entry
+                            entry.subject = subject
+                            entry.faculty = faculty
+                            entry.save()
+                        else:
+                            # Create new entry if none exists
+                            TimetableEntry.objects.create(
+                                day=day,
+                                period=int(period),
+                                cls_id=int(cls_id),
+                                subject=subject,
+                                faculty=faculty
+                            )
+
+            if conflicts and not force_update:
+                return JsonResponse({"status": "conflict", "conflicts": conflicts}, status=400)
+
+            return JsonResponse({"status": "success", "conflicts": []})
+
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
 
 

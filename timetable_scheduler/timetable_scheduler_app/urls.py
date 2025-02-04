@@ -51,6 +51,8 @@ urlpatterns = [
     path('regpage',RegPage.as_view(),name="regpage"),
     path('',HomeBase.as_view(),name="homebase"),
     path('timetable',TimetableView.as_view(),name='timetable'),
+    path('edit_timetable/', edit_timetable, name='edit_timetable'),
+    path('save_timetable/', save_timetable, name='save_timetable'),
     path('createtimetable',TimetablePage.as_view(),name='createtimetable'),
     path('generatetimetable',generate_timetable,name='generatetimetable'),
     path('studviewsubject', StudSub.as_view(), name='studviewsubject') ,
@@ -58,7 +60,7 @@ urlpatterns = [
     path('staffprofile',StaffProfile.as_view(),name='staffprofile'),
     path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
     path('deleteall/deleteall/',DeleteAll,name='deleteall'),
-
+    path('studentprofile',StudentProfile.as_view(),name='studentprofile'), 
 ]
 
 

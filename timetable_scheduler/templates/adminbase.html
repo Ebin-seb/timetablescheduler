@@ -7,8 +7,130 @@
             <p>We are glad to have you back.</p>
         </div>
     </header>
-    <div class="profile-image">
-        <img src="../static/images/college.jpeg" alt="College Image" style="width: 100%; height: auto; border-radius: 10px;">
+    <div class="image-library">
+        <div class="thumbnails" id="thumbnail-container"></div>
+    </div>
+    <div class="carousel-wrapper">
+        <img id="carousel-image" src="../static/images/college.jpeg" alt="College Image">
+        <button class="carousel-btn prev" onclick="changeImage(-1)">❮</button>
+        <button class="carousel-btn next" onclick="changeImage(1)">❯</button>
     </div>
 </div>
+
+<style>
+    .main {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: calc(100% - 250px); /* Adjust for sidebar width */
+        margin-left: 20px; /* Prevents shifting sidebar */
+    }
+
+    .carousel-wrapper {
+        position: relative;
+        width: 70%;
+        max-width: 600px;
+        margin: 20px auto;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .carousel-wrapper img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        display: block;
+    }
+
+    .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .carousel-btn.prev {
+        left: 10px;
+    }
+
+    .carousel-btn.next {
+        right: 10px;
+    }
+
+    .carousel-btn:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .image-library {
+        display: flex;
+        justify-content: center;
+        margin: 20px;
+    }
+
+    .thumbnails {
+        display: flex;
+        gap: 10px;
+    }
+
+    .thumbnails img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .thumbnails img:hover {
+        transform: scale(1.1);
+    }
+</style>
+
+<script>
+    let images = [
+        "../static/images/log.jpg",
+        "../static/images/college.jpeg",
+        "../static/images/college.jpeg",
+        "../static/images/college.jpeg",
+        "../static/images/college5.jpeg"
+    ];
+    let currentIndex = 0;
+
+    function updateThumbnails() {
+        const container = document.getElementById("thumbnail-container");
+        container.innerHTML = "";
+        images.forEach((src, index) => {
+            const img = document.createElement("img");
+            img.src = src;
+            img.onclick = () => changeImageToIndex(index);
+            container.appendChild(img);
+        });
+    }
+
+    function changeImage(direction) {
+        currentIndex += direction;
+        if (currentIndex < 0) {
+            currentIndex = images.length - 1;
+        } else if (currentIndex >= images.length) {
+            currentIndex = 0;
+        }
+        document.getElementById("carousel-image").src = images[currentIndex];
+    }
+
+    function changeImageToIndex(index) {
+        currentIndex = index;
+        document.getElementById("carousel-image").src = images[currentIndex];
+    }
+
+    document.addEventListener("DOMContentLoaded", updateThumbnails);
+</script>
 {% endblock %}
