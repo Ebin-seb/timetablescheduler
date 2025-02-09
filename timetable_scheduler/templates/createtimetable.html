@@ -39,13 +39,13 @@
     /* Loading spinner styles */
     .loading-spinner {
         display: none; /* Initially hidden */
-        margin-top: 20px;
+        margin: 20px auto 0;
         width: 50px;
         height: 50px;
         border: 5px solid #f3f3f3;
         border-top: 5px solid #007bff;
         border-radius: 50%;
-        animation: spin 2s linear infinite;
+        animation: spin 1s linear infinite;
     }
 
     /* Keyframe for spinning animation */
@@ -53,6 +53,7 @@
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
+
 </style>
 {% endblock %}
 
@@ -62,7 +63,7 @@
         {% csrf_token %}
         <h1>Create Timetable</h1>
         <button type="submit" class="create-timetable-button" id="createTimetableButton">Create Timetable</button>
-        <div id="message" class="message">Click the button to create a timetable! <br> wait until the timetable is created</div>
+        <div id="message" class="message">Click the button to create a timetable! <br> Wait until the timetable is created</div>
         
         <!-- Loading spinner -->
         <div id="loadingSpinner" class="loading-spinner"></div>
@@ -72,34 +73,30 @@
 
 {% block scripts %}
 <script>
-    // Wait for DOM to be fully loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('timetableForm');
-        const spinner = document.getElementById('loadingSpinner');
-        const message = document.getElementById('message');
-        const createButton = document.getElementById('createTimetableButton');
+    document.addEventListener("DOMContentLoaded", function () {
+        const spinner = document.getElementById("loadingSpinner");
 
-        form.addEventListener('submit', function(event) {
-            // Prevent default form submission
-            event.preventDefault();
+        // Remove spinner state if page is refreshed
+        if (performance.navigation.type === 1) {  // 1 means 'Reload'
+            sessionStorage.removeItem("loading");
+        }
 
-            // Show loading spinner
-            spinner.style.display = 'block';
-            createButton.disabled = true;  // Disable the button to prevent multiple submissions
+        // Show spinner if sessionStorage flag is set
+        if (sessionStorage.getItem("loading") === "true") {
+            spinner.style.display = "block";
+        }
 
-            // Simulate form submission (you can remove this setTimeout and submit the form via AJAX or reload)
-            setTimeout(function() {
-                // Optionally you can submit the form here if you want to proceed after the animation
-                // form.submit();  // Uncomment if using traditional form submission
-
-                // Hide the loading spinner and re-enable the button
-                spinner.style.display = 'none';
-                createButton.disabled = false;
-
-                // Update the message
-                message.innerHTML = 'Timetable created successfully!';
-            }, 1000);  // Simulate delay (remove this part when submitting via AJAX)
+        // Show spinner when form is submitted
+        document.getElementById("timetableForm").addEventListener("submit", function () {
+            spinner.style.display = "block";
+            sessionStorage.setItem("loading", "true");  // Keep spinner visible
         });
+
+        // Stop spinner when the timetable page is loaded
+        if (window.location.pathname.includes("/timetable")) {  
+            sessionStorage.removeItem("loading");  
+            spinner.style.display = "none";  // Hide spinner
+        }
     });
 </script>
 {% endblock %}

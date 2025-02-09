@@ -163,13 +163,12 @@
 
         entries.forEach(entry => {
             let facultyId = entry.getAttribute("data-faculty-id");
-
-            if (selectedFaculty === "all" || facultyId === selectedFaculty) {
-                entry.style.display = ""; // Show entry
-            } else {
-                entry.style.display = "none"; // Hide entry
-            }
-        });
+                    if (selectedFaculty === "all" || facultyId === selectedFaculty) {
+            entry.style.visibility = "visible"; // Keep space but hide content
+        } else {
+            entry.style.visibility = "hidden"; // Keep space, hide content
+        }
+       });
     });
 </script>
 
