@@ -1,0 +1,175 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Timetable</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 20px;
+            }
+            table, th, td {
+                border: 1px solid #ddd;
+            }
+            th, td {
+                padding: 10px;
+                text-align: center;
+            }
+            th {
+                background-color: #f4f4f4;
+            }
+            button {
+                background-color: #007bff;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 5px;
+                border: none;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            select {
+                padding: 8px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                margin-bottom: 20px;
+            }
+        </style>
+
+</head>
+<body>
+    <h2>Timetable</h2>
+    
+    <!-- Dropdown for faculty filtering -->
+    <label for="facultyFilter">Filter by faculty:</label>
+    <select id="facultyFilter">
+            <option value="all">All faculties</option>
+            {% for faculty in faculties %}
+            <option value="{{ faculty.id }}">{{ faculty.name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+       
+        <button id="downloadPdf">Download as PDF</button>
+        <button id="exportExcel">Export To excel</button>
+       
+        <div id="timetable">
+    {% for cls, days_data in timetable_data.items %}
+    <h3>Class: {{ cls.semester_name }}</h3>
+    <table class="timetable">
+        <thead>
+            <tr>
+                <th>Day/Period</th>
+                {% for period in periods %}
+                    <th>Period {{ period }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for day in days %}
+                <tr>
+                    <td>{{ day }}</td>
+                    {% for period in periods %}
+                        <td class="entry" data-faculty-id="{% with days_data|get_item:day|get_item:period as entry %}{% if entry %}{{ entry.faculty.id }}{% else %}none{% endif %}{% endwith %}">
+                            {% with days_data|get_item:day|get_item:period as entry %}
+                                {% if entry %}
+                                    {{ entry.subject.subject_name }}<br>
+                                    (faculty: {{ entry.faculty.name }})
+                                {% else %}
+                                    Free
+                                    {% endif %}
+                                    {% endwith %}<div id="timetable"></div>
+                                </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+    </table>
+{% endfor %}
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+<script>
+    document.getElementById('downloadPdf').addEventListener('click', function () {
+        const timetable = document.getElementById('timetable');
+        const options = {
+            margin: 10,
+            filename: 'timetable.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().from(timetable).set(options).save();
+    });
+    
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+    document.getElementById('exportExcel').addEventListener('click', function () {
+        const timetableDiv = document.getElementById('timetable'); // Get all timetable data
+        const tables = timetableDiv.querySelectorAll('.timetable'); // Select all timetable tables
+        const workbook = XLSX.utils.book_new(); // Create a new workbook
+        const allData = []; // Array to store all timetable data
+
+        // Create a header row for the single sheet
+        const header = ['Class', 'Day', 'Period', 'Subject', 'Faculty'];
+        allData.push(header); // Push the header row
+
+        // Loop through each timetable table and extract data
+        tables.forEach((table) => {
+            const className = table.previousElementSibling.textContent.trim(); // Get class name
+            const rows = table.querySelectorAll('tbody tr'); // Get all rows in the table
+            
+            rows.forEach((row) => {
+                const cells = row.querySelectorAll('td'); // Get cells in the row
+                const day = cells[0].textContent.trim(); // Day
+                const periods = cells.length > 1 ? cells.length - 1 : 0; // Number of periods
+
+                // Loop through each period and gather the subject and faculty data
+                for (let i = 1; i <= periods; i++) {
+                    const subject = cells[i].textContent.trim() || 'Free'; // Subject or 'Free' if empty
+                    const faculty = subject !== 'Free' ? cells[i].querySelector('div').textContent.trim().split(': ')[1] : 'N/A'; // Faculty name
+
+                    // Add the data for this row
+                    allData.push([className, day, `Period ${i}`, subject, faculty]);
+                }
+            });
+        });
+
+        // Convert allData to a worksheet
+        const worksheet = XLSX.utils.aoa_to_sheet(allData); 
+
+        // Add the worksheet to the workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Timetable'); 
+
+        // Download the Excel file
+        XLSX.writeFile(workbook, 'combined_timetable.xlsx');
+    });
+   </script>
+   <script>
+    document.getElementById("facultyFilter").addEventListener("change", function() {
+        let selectedFaculty = this.value; // Get selected faculty ID
+        let entries = document.querySelectorAll(".entry"); // Get all timetable entries
+
+        entries.forEach(entry => {
+            let facultyId = entry.getAttribute("data-faculty-id");
+                    if (selectedFaculty === "all" || facultyId === selectedFaculty) {
+            entry.style.visibility = "visible"; // Keep space but hide content
+        } else {
+            entry.style.visibility = "hidden"; // Keep space, hide content
+        }
+       });
+    });
+</script>
+
+</body>
+</html>

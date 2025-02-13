@@ -57,6 +57,7 @@ urlpatterns = [
     path('generatetimetable',generate_timetable,name='generatetimetable'),
     path('studviewsubject', StudSub.as_view(), name='studviewsubject') ,
     path('timetable2',StudentTimetable.as_view(),name='timetable2'),
+    path('timetable3',StaffTimetable.as_view(),name='timetable3'),   
     path('staffprofile',StaffProfile.as_view(),name='staffprofile'),
     path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
     path('deleteall/deleteall/',DeleteAll,name='deleteall'),

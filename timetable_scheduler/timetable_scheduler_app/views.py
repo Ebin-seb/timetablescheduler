@@ -709,6 +709,42 @@ class StudentTimetable(View):
 
         return render(request, self.template_name, context)
 
+class StaffTimetable(View):
+    template_name = 'timetable3.html'  # Specify your template name here
+
+    def get(self, request, *args, **kwargs):
+        # Get all classes
+        
+
+
+        classes = SemesterTable.objects.all()
+    
+        faculties= StaffTable.objects.all()
+        
+        # Define the days and periods
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        periods = [1, 2, 3, 4, 5]  # Assuming 5 periods per day
+
+        # Initialize a dictionary to hold timetable data
+        timetable_data = {cls: {day: {period: None for period in periods} for day in days} for cls in classes}
+
+        # Populate the timetable dictionary with entries
+        entries = TimetableEntry.objects.filter(cls__in=classes)    
+        for entry in entries:
+            if '-' in entry.subject.subject_name:
+                entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
+            timetable_data[entry.cls][entry.day][entry.period] = entry
+        print(entries)
+        # Create a context dictionary for the template
+        context = {
+            'timetable_data': timetable_data,
+            'days': days,
+            'periods': periods,
+            'faculties':faculties
+        }
+        
+        return render(request, self.template_name, context)
+    
 
 class TimetablePage(View):
     def get(self,request):
