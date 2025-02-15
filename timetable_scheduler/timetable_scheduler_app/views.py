@@ -518,11 +518,54 @@ def generate_timetable(request):
     
     # Identify common and uncommon subjects
     common_subject_ids = SubjectTable.objects.annotate(class_count=Count('class1')).filter(class_count__gt=1).values_list('id', flat=True)
+    lab_subjects = SubjectTable.objects.filter(subject_name__icontains='-lab')
     common_subjects = SubjectTable.objects.filter(id__in=common_subject_ids)
-    uncommon_subjects = SubjectTable.objects.exclude(id__in=common_subject_ids)
+    uncommon_subjects = SubjectTable.objects.exclude(id__in=common_subject_ids).exclude(id__in=lab_subjects)
     
     common_subject_slots = {}
     
+
+# Allocate lab subjects first
+    for cls in classes:
+        class_labs = lab_subjects.filter(class1=cls)
+        
+        for lab in class_labs:
+            hours_remaining = lab.contact_hours
+            allocated = False  # Track if we successfully allocated the lab
+            
+            # Generate available slots for the class
+            available_slots = {
+                day: [period for period in periods if not TimetableEntry.objects.filter(day=day, period=period, cls=cls).exists()]
+                for day in days
+            }
+
+            shuffle(days)  # Randomize day selection to distribute labs across the week
+
+            # Try to find continuous slots based on contact hours
+            for day in days:
+                if allocated:
+                    break  # Stop if lab is fully assigned
+                
+                available_periods = available_slots[day]
+                available_periods.sort()  # Ensure periods are in order
+                
+                # Check for continuous blocks of lab.contact_hours
+                for i in range(len(available_periods) - (hours_remaining - 1)):
+                    if all(available_periods[j] == available_periods[i] + j for j in range(hours_remaining)):
+                        # Found a continuous block
+                        for j in range(hours_remaining):
+                            TimetableEntry.objects.create(
+                                day=day,
+                                period=available_periods[i] + j,
+                                cls=cls,
+                                subject=lab,
+                                faculty=lab.staff
+                            )
+
+                        allocated = True  # Lab has been scheduled
+                        break  # Stop checking this day
+
+            # If no continuous slots are found, the lab will remain unassigned for now.
     # Assign slots for common subjects
     for subject in common_subjects:
         available_slots = [
@@ -607,7 +650,6 @@ def generate_timetable(request):
                         break
             else:
                 occupied_slots[slot_key] = entry
-    
     return redirect('timetable')
 
 
@@ -662,7 +704,7 @@ class TimetableView(View):
         entries = TimetableEntry.objects.filter(cls__in=classes)    
         for entry in entries:
             if '-' in entry.subject.subject_name:
-                entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
+                entry.subject.subject_name = entry.subject.subject_name.partition("-")[2]
             timetable_data[entry.cls][entry.day][entry.period] = entry
         print(entries)
         # Create a context dictionary for the template
@@ -695,7 +737,7 @@ class StudentTimetable(View):
         entries = TimetableEntry.objects.select_related('cls', 'subject', 'faculty').all()
         for entry in entries:
             if '-' in entry.subject.subject_name:
-                entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
+                entry.subject.subject_name = entry.subject.subject_name.partition("-")[2]
             timetable_data[entry.cls][entry.day][entry.period] = entry
 
         # Adjust the context for the frontend template
@@ -732,7 +774,7 @@ class StaffTimetable(View):
         entries = TimetableEntry.objects.filter(cls__in=classes)    
         for entry in entries:
             if '-' in entry.subject.subject_name:
-                entry.subject.subject_name = entry.subject.subject_name.split("-")[1]
+                entry.subject.subject_name = entry.subject.subject_name.partition("-")[2]
             timetable_data[entry.cls][entry.day][entry.period] = entry
         print(entries)
         # Create a context dictionary for the template

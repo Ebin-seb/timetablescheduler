@@ -50,7 +50,7 @@
 
     /* Keyframe for spinning animation */
     @keyframes spin {
-        0% { transform: rotate(0deg); }
+        100% { transform: rotate(180deg); }
         100% { transform: rotate(360deg); }
     }
 
@@ -76,9 +76,15 @@
     document.addEventListener("DOMContentLoaded", function () {
         const spinner = document.getElementById("loadingSpinner");
 
-        // Remove spinner state if page is refreshed
+        // Remove spinner state if page is refreshed manually
         if (performance.navigation.type === 1) {  // 1 means 'Reload'
             sessionStorage.removeItem("loading");
+        }
+
+        // Check if we are on the "Create Timetable" page and reset spinner
+        if (window.location.pathname.includes("/generatetimetable")) {
+            sessionStorage.removeItem("loading");
+            spinner.style.display = "none"; // Hide spinner when user revisits
         }
 
         // Show spinner if sessionStorage flag is set
@@ -92,11 +98,11 @@
             sessionStorage.setItem("loading", "true");  // Keep spinner visible
         });
 
-        // Stop spinner when the timetable page is loaded
-        if (window.location.pathname.includes("/timetable")) {  
-            sessionStorage.removeItem("loading");  
-            spinner.style.display = "none";  // Hide spinner
-        }
+        // Stop spinner when redirected and fully loaded
+        window.addEventListener("load", function () {
+            sessionStorage.removeItem("loading");
+            spinner.style.display = "none";  // Properly hide spinner
+        });
     });
 </script>
 {% endblock %}
