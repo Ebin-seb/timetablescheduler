@@ -120,15 +120,23 @@
             placeholder="enter your name"
             name="name"
           />
-          <label for="mail">Email id :</label>
+          <label for="email">Email id :</label>
           <input
-            type="text"
+            type="email"
             id="mail"
             required
             placeholder="enter your mail"
             name="email"
           />
-         
+          <label for="course">Course:</label>
+        <select id="course" name="course_id" required>
+          <option disabled selected>select your course</option>
+            {% for i in c %}
+                <option value="{{ i.id }}" {% if obj.course_id.id == i.id %}selected{% endif %}>
+                    {{ i.course_name }}
+                </option>
+            {% endfor %}
+        </select>
 
          
           <label for="username">Username :</label>

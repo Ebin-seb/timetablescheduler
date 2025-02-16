@@ -61,7 +61,9 @@ urlpatterns = [
     path('staffprofile',StaffProfile.as_view(),name='staffprofile'),
     path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
     path('deleteall/deleteall/',DeleteAll,name='deleteall'),
-    path('studentprofile',StudentProfile.as_view(),name='studentprofile'), 
+    path('studentprofile',StudentProfile.as_view(),name='studentprofile'),
+    path('studenteditprofile/<int:prof_id>',StudentEditProfile.as_view(),name="studenteditprofile"),
+ 
 ]
 
 

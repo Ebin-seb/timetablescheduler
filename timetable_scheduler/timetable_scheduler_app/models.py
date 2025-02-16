@@ -57,7 +57,7 @@ class TimetableEntry(models.Model):
 class StudentTable(models.Model):
     login_id=models.ForeignKey(LoginTable,on_delete=models.CASCADE,blank=True,null=True)
     name=models.CharField(max_length=50,blank=True,null=True)
-    semester_id=models.ForeignKey(SemesterTable,on_delete=models.CASCADE,blank=True,null=True)
+    course_id=models.ForeignKey(CourseTable,on_delete=models.CASCADE,blank=True,null=True)
     email=models.CharField(max_length=50,blank=True,null=True)
 
     

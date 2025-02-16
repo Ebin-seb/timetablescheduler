@@ -46,7 +46,7 @@ class StaffForm(ModelForm):
 class StudentForm(ModelForm):
     class Meta:
         model=StudentTable
-        fields=['name','email']
+        fields=['name','email','course_id']
 
 class ConflictForm(ModelForm):
     class Meta:

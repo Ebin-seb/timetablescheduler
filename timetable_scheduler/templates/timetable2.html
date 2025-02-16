@@ -46,10 +46,10 @@
         <h2>Timetable</h2>
 
         <!-- Dropdown for class filtering -->
-        <label for="classFilter">Filter by Class:</label>
+        <label for="classFilter">Filter by Semester:</label>
         <select id="classFilter">
-            <option value="all">All Classes</option>
-            {% for cls in classes %}
+            <option value="all">All Semesters</option>
+            {% for cls in semesters %}
             <option value="{{ cls.id }}">{{ cls.semester_name }}</option>
             {% endfor %}
         </select><br><br>

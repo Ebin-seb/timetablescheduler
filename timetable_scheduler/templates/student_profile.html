@@ -70,8 +70,11 @@
         <div class="profile-details">
             <p><strong>Name:</strong> {{ student.name }}</p>
             <p><strong>Email:</strong> {{ student.email }}</p>
+            <p><strong>course:</strong> {{ student.course_id.course_name }}</p>
         </div>
-        <button class="edit-button">edit</button>
+        <a href="{% url 'studenteditprofile' student.id %}">
+            <button class="edit-button">Edit Profile</button>
+        </a>
     {% endif %}
 </div>
 {% endblock %}
