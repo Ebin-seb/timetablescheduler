@@ -1,4 +1,5 @@
 from pyexpat.errors import messages
+from django.contrib.auth import logout
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -12,8 +13,18 @@ class HomePage(View):
     def get(self, request):
         return render(request, "home.html")
 class Logout(View):
-    def get(self,request):
-        return redirect('login')
+    def get(self, request):
+        # Clear the session
+        logout(request)
+
+        # Clear session and force expiry
+        request.session.flush() 
+        return HttpResponse('''
+                    <script>
+                        window.location.reload();
+                        window.location.href = "/login"; // Redirect to login
+                    </script>
+                ''')
       
 class LoginPage(View):
     def get(self, request):
@@ -78,12 +89,15 @@ class ConflictView(View):
         obj=ConflictTable.objects.all()
         return render(request,"admin_conflictview.html",{'obj':obj})
     
-    
 class ViewAlloc(View):
-    def get(self,request):
+    def get(self, request):
         print("%%%%%%%%%%%%%%", request.session['user_id'])
-        obj=SubjectTable.objects.filter(staff__login_id=request.session['user_id'])
-        return render(request,"staff_viewalloc.html" ,{'obj':obj})
+
+        # Fetch subjects assigned to the logged-in staff
+        obj = SubjectTable.objects.filter(staff__login_id=request.session['user_id']).prefetch_related('class1', 'class1__course_id')
+
+        return render(request, "staff_viewalloc.html", {'obj': obj})
+
 
     
 class StaffConflict(View):
@@ -200,22 +214,43 @@ class ViewSub(View):
         obj=SubjectTable.objects.all()
 
         return render(request,"college/view_subject.html",{'val':obj})
-    
+
 class StudSub(View):
     def get(self, request):
-        semester_id = request.GET.get('semester_id')  # Get semester ID from request
+        userid = request.session.get('user_id')
+
+        if not userid:
+            return redirect('login')
+
+        try:
+            # Get the logged-in student
+            student = StudentTable.objects.get(login_id__id=userid)
+        except StudentTable.DoesNotExist:
+            return redirect('login')  
+
+        # Get the student's course
+        student_course = student.course_id  
+
+        # Get all semesters related to the student's course
+        semesters = SemesterTable.objects.filter(course_id=student_course).prefetch_related('subjects')
+
+        # Get the selected semester (if any)
+        semester_id = request.GET.get('semester_id')
 
         if semester_id:
-            semester = SemesterTable.objects.get(id=semester_id)
-            subjects = semester.subjects.all()  # Get subjects linked to the semester
+            # If a semester is selected, filter subjects for that semester only
+            selected_semester = semesters.filter(id=semester_id).first()
+            subjects = selected_semester.subjects.all() if selected_semester else []
         else:
-            subjects = SubjectTable.objects.all()  # Show all subjects if no semester is selected
+            # If no semester is selected, get all subjects from all semesters of the course
+            subjects = SubjectTable.objects.filter(semesters__in=semesters).distinct().select_related('staff')
 
-        semesters = SemesterTable.objects.all()  # Fetch all semesters for dropdown
-
-        return render(request, "student_viewsub.html", {'val': subjects, 'semesters': semesters})
-
-
+        return render(request, "student_viewsub.html", {
+            'semesters': semesters,
+            'subjects': subjects,
+            'student_course': student_course,
+            'selected_semester': semester_id
+        })
     
 class DeleteSub(View):
     def get(self, request,sub_id):
@@ -356,6 +391,12 @@ class StaffEditProfile(View):
             'success': 'Profile updated successfully!'
         })
 
+class StaffDeleteSub(View):
+    def get(self, request,sub_id):
+        d = SubjectTable.objects.get(id=sub_id)
+        d.delete()
+        return redirect('viewalloc')
+    
 class StudentEditProfile(View):
     def get(self,request,prof_id):
         obj=StudentTable.objects.get(id=prof_id)
@@ -411,7 +452,7 @@ class StudentFeedback(View):
             user=LoginTable.objects.get(id=request.session.get('user_id') )
             feedback.student_id = user
             feedback.save()
-            return redirect('student')
+            return redirect('studentprofile')
 
 class StaffDash(View):
      def  get(self,request):

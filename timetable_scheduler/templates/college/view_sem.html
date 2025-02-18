@@ -6,39 +6,69 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="{%static 'css/verifystaff.css'%}" />
+    <link rel="stylesheet" href="{% static 'css/verifystaff.css' %}" />
+    <style>
+      .warning {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="table">
         <form method="post">
-        <table>
-          <tr>
-            <th>Id</th>
-            <th>Semester</th>
-            <th>Course</th>
-            <th>Subject</th>
-            <th>Action</th>
-            
-          </tr>
-          {% for i in val %}
-          <tr>
-            <td>{{forloop.counter}}</td>
-            <td>{{i.semester_name}}</td>
-            <td>{{i.course_id.course_name}}</td>
-            <td>{% for subject in i.subjects.all %}
-              {{ subject.subject_name }}{% if not forloop.last %},{% endif %} {% endfor %}
-            </td>
-            
-            <td>
-              <a href="editsem/{{ i.id }}">edit</a>
-              <a href="deletesem/{{ i.id }}" onclick="return confirm('are you sure you want to delete')">delete</a>
-            </td>
-          </tr>
-          {% endfor %}
-        </table>
-        <a href="/addsem"><button type="button">add</button></a>
-        <a href="/add"><button type="button">back</button></a>
-          </form>
+          <table id="semesterTable">
+            <tr>
+              <th>Id</th>
+              <th>Semester</th>
+              <th>Course</th>
+              <th>Subjects</th>
+              <th>Total Contact Hours</th>
+              <th>Action</th>
+            </tr>
+            {% for i in val %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ i.semester_name }}</td>
+              <td>{{ i.course_id.course_name }}</td>
+              <td>
+                {% for subject in i.subjects.all %}
+                  {{ subject.subject_name }} ({{ subject.contact_hours }} hrs){% if not forloop.last %}, {% endif %}
+                {% endfor %}
+              </td>
+              <td class="total-hours" data-hours="{% for subject in i.subjects.all %}{{ subject.contact_hours|default:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}"></td>
+              <td>
+                <a href="editsem/{{ i.id }}">edit</a>
+                <a href="deletesem/{{ i.id }}" onclick="return confirm('Are you sure you want to delete?')">delete</a>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+          <a href="/addsem"><button type="button">Add</button></a>
+          <a href="/add"><button type="button">Back</button></a>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".total-hours").forEach(function (td) {
+          let hoursText = td.getAttribute("data-hours");
+          let totalHours = 0;
+
+          if (hoursText) {
+            totalHours = eval(hoursText); // Safe since we control the data
+          }
+
+          td.textContent = totalHours + " hrs";
+
+          // Apply warning if contact hours exceed 25 or are below 25
+          if (totalHours > 25 || totalHours < 25) {
+            td.classList.add("warning");
+          }
+        });
+      });
+    </script>
   </body>
 </html>

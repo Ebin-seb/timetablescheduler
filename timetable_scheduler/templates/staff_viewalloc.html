@@ -15,19 +15,53 @@
         <table>
           <tr>
             <th>id</th>
+            <th>course</th>
+            <th>semester</th>
             <th>Subject</th>
             <th>contact hours</th>
+            <th>Actions</th>
           </tr>
           {% for i in obj %}
           <tr>
             <td>{{forloop.counter}}</td>
+            <td>
+                {% for j in i.class1.all %}
+                    {{ j.course_id.course_name }}
+                {% endfor %}
+            </td>
+            <td>
+              {% for k in i.class1.all %}
+                  {{ k.semester_name }}
+              {% endfor %}
+          </td>
             <td>{{i.subject_name}}</td>
-            <td>{{i.contact_hours}}</td>
+            <td class="contact-hours">{{i.contact_hours}}</td>
+            <td>         
+              <a href="editdep/{{ i.id }}">edit</a>
+              <a href="staffdeletesub/{{ i.id }}" onclick="return confirm('are you sure you want to delete')">delete</a></td>
           </tr>
           {% endfor %}
+          <tr><td></td></tr>
+          <tr>
+            <td></td><td></td>
+            <td colspan="2" style="color:red; "><strong>Total Contact Hours:</strong></td>
+            <td id="totalHours" style="color:red;"><strong>0</strong></td>
+          </tr>
         </table>
-        <a href="/staffconflict"><button type="button">Raise conflict</button></a>
-        <a href="/staffdash"><button type="button">back</button></a>
+        <a href="/staffprofile"><button type="button">back</button></a>
           </form>
+        <script>
+          function calculateTotalHours() {
+            let total = 0;
+            document.querySelectorAll(".contact-hours").forEach(cell => {
+              let hours = parseInt(cell.textContent.trim()) || 0;
+              total += hours;
+            });
+            document.getElementById("totalHours").textContent = total;
+          }
+    
+          // Call function on page load
+          document.addEventListener("DOMContentLoaded", calculateTotalHours);
+        </script>
   </body>
 </html>

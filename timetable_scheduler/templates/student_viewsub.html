@@ -3,13 +3,13 @@
  <form method="get"><br><br>
   <label for="semester">Select Semester:</label>
   <select name="semester_id" id="semester" onchange="this.form.submit()">
-      <option value="">All Semesters</option>
-      {% for semester in semesters %}
-      <option value="{{ semester.id }}" {% if request.GET.semester_id == semester.id|stringformat:"s" %}selected{% endif %}>
-          {{ semester.semester_name }} - {{ semester.course_id.name }}
-      </option>
-      {% endfor %}
-  </select><br><br><br>
+    <option value="" selected  disabled>Select your semester</option>
+    {% for semester in semesters %}
+    <option value="{{ semester.id }}" {% if semester.id|stringformat:"s" == selected_semester %}selected{% endif %}>
+        {{ semester.semester_name }} - {{ semester.course_id.course_name }}
+    </option>
+    {% endfor %}
+</select><br><br><br>
   <table>
     <tr>
       <th>ID</th>
@@ -17,10 +17,15 @@
       <th>Contact Hours</th>
       <th>Staff</th>
     </tr>
-    {% for i in val %}
+    {% for i in subjects %}
     <tr>
+      {% for semester in subject.class1.all %}
+          {{ semester.semester_name }}
+      {% endfor %}
       <td>{{ forloop.counter }}</td>
-      <td>{{ i.subject_name }}</td>
+      
+
+      <td>{{ i.subject_name}}</td>
       <td>{{ i.contact_hours }}</td>
       <td>{{ i.staff.name }}</td>
     </tr>
