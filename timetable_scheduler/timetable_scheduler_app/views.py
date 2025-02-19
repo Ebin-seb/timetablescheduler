@@ -98,7 +98,29 @@ class ViewAlloc(View):
 
         return render(request, "staff_viewalloc.html", {'obj': obj})
 
+class StaffSubAdd(View):
+    def  get(self,request):
+        # form=StaffSubForm()
+        return render(request,"staff_addsub.html")
+    def post(self, request):
+        form = StaffSubForm(request.POST)
+        if form.is_valid():
+            subject = form.save(commit=False) 
+            user=StaffTable.objects.get(login__id=request.session.get('user_id') )
+            subject.staff = user
+            subject.save()
+            return HttpResponse('''<script>alert('new subject added');window.location.href='/viewalloc';</script>''')
 
+class StaffSubEdit(View):
+    def get(self, request,sub_id):
+        s =SubjectTable.objects.get(id=sub_id)
+        return render(request, "staff_editsub.html",{'s':s })
+    def post(self,request,sub_id):
+        obj = SubjectTable.objects.get(id=sub_id)
+        form=StaffSubForm(request.POST, instance=obj)
+        if form.is_valid():
+            form.save()
+            return HttpResponse('''<script>alert('subject updated');window.location.href='/viewalloc';</script>''')
     
 class StaffConflict(View):
     def  get(self,request):
@@ -108,7 +130,7 @@ class StaffConflict(View):
         form=ConflictForm(request.POST)
         if form.is_valid():
             conflict = form.save(commit=False)
-            user=StaffTable.objects.get(login_id=request.session.get('user_id') )
+            user=StaffTable.objects.get(login_id=request.session.get('user_id') )   
             conflict.staff_id = user
             conflict.save()
             return HttpResponse('''<script>alert('submitted');window.location.href='/staffconflict';</script>''')

@@ -23,6 +23,11 @@ class SubForm(ModelForm):
         model = SubjectTable
         fields = ['subject_name','contact_hours','staff']
 
+class StaffSubForm(ModelForm):
+    class Meta:
+        model = SubjectTable
+        fields = ['subject_name','contact_hours']
+
 class CourseForm(ModelForm):
     class Meta:
         model = CourseTable

@@ -60,6 +60,8 @@ urlpatterns = [
     path('timetable3',StaffTimetable.as_view(),name='timetable3'),   
     path('staffprofile',StaffProfile.as_view(),name='staffprofile'),
     path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
+    path('staffaddsub',StaffSubAdd.as_view(),name="staffaddsub"),
+    path('staffeditsub/<int:sub_id>',StaffSubEdit.as_view(),name="staffeditsub"),
 
 
     path('studentdash',StudentDash.as_view(),name="student"),

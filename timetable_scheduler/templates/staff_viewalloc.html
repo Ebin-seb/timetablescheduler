@@ -37,18 +37,20 @@
             <td>{{i.subject_name}}</td>
             <td class="contact-hours">{{i.contact_hours}}</td>
             <td>         
-              <a href="editdep/{{ i.id }}">edit</a>
+              <a href="staffeditsub/{{ i.id }}">edit</a>
               <a href="staffdeletesub/{{ i.id }}" onclick="return confirm('are you sure you want to delete')">delete</a></td>
           </tr>
           {% endfor %}
           <tr><td></td></tr>
           <tr>
             <td></td><td></td>
-            <td colspan="2" style="color:red; "><strong>Total Contact Hours:</strong></td>
-            <td id="totalHours" style="color:red;"><strong>0</strong></td>
+            <td colspan="2" style="color:rgb(17, 16, 16); "><strong>Total Contact Hours:</strong></td>
+            <td id="totalHours" style="color:rgb(12, 12, 12);"><strong>0</strong></td>
           </tr>
         </table>
+        <p id="message" style="color:rgb(73, 236, 40);">The course and semester of subject will be shown after Admin allocate them !</p>
         <a href="/staffprofile"><button type="button">back</button></a>
+        <a href="/staffaddsub"><button type="button">Add</button></a>
           </form>
         <script>
           function calculateTotalHours() {
