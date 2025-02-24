@@ -17,18 +17,28 @@
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" value="{{ obj.email }}" required>
-   
-
+        
         <label for="course">Course:</label>
         <select id="course" name="course_id" required>
             {% for i in c %}
-                <option value="{{ i.id }}" {% if obj.course_id.id == i.id %}selected{% endif %}>
-                    {{ i.course_name }}
-                </option>
-            {% endfor %}
+            <option value="{{ i.id }}" {% if obj.course_id.id == i.id %}selected{% endif %}>
+                {{ i.course_name }}
+                {% endfor %}
+            </option>
         </select>
+        <label for="name">username:</label>
+        <input type="username" id="username" name="username" value="{{ obj.login_id.username}}" required>
+        
+        <label for="name">password:</label>
+        <input type="password" id="password" name="password" value="{{ obj.login_id.password }}" required>
+        <button type="button" onclick="togglePassword()" >show</button><br><br>
 
         <button type="submit" class="save-button">Save Changes</button>
     </form>
 </div>
+<script>
+function togglePassword() {
+    var passwordField = document.getElementById("password");
+    passwordField.type = (passwordField.type === "password") ? "text" : "password";
+}</script>
 {% endblock %}

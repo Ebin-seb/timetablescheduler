@@ -138,13 +138,21 @@
             placeholder="password"
             name="password"
           /><br />
-          <a href="https://google.com">forgot password?</a>
+          <a href="{% url 'forgot_password' %}">forgot password?</a>
           <button type="login" id="log">login</button><br />
           <a href="/regpage" class="signup">Register</a>
         </form>
       </div>
     </div>
     </div>
+    <script>
+      (function() {
+          window.history.pushState(null, "", window.location.href);
+          window.onpopstate = function() {
+              window.history.pushState(null, "", window.location.href);
+          };
+      })();
+    </script>
     {% endblock %}
   </body>
 </html>

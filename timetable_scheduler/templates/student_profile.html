@@ -68,9 +68,10 @@
             <h2>Student Profile</h2>
         </div>
         <div class="profile-details">
-            <p><strong>Name:</strong> {{ student.name }}</p>
-            <p><strong>Email:</strong> {{ student.email }}</p>
-            <p><strong>course:</strong> {{ student.course_id.course_name }}</p>
+            <p>Name:<strong> {{ student.name }}</strong></p>
+            <p>Email:<strong> {{ student.email }}</strong></p>
+            <p>course:<strong> {{ student.course_id.course_name }}</strong></p>
+            <p>Username:<strong> {{ student.login_id.username }}</strong></p>
         </div>
         <a href="{% url 'studenteditprofile' student.id %}">
             <button class="edit-button">Edit Profile</button>

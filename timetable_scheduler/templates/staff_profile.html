@@ -3,14 +3,14 @@
 <style>
     /* Profile Page Styles */
     .profile-container {
-        max-width: 400px;
+        max-width: 200px;
         margin: 50px auto;
         background: #fff;
         border-radius: 15px;
         box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         overflow: hidden;
         text-align: center;
-        padding: 20px;
+        padding: 10px;
     }
 
     .profile-container .profile-header {
@@ -68,10 +68,11 @@
             <h2>Staff Profile</h2>
         </div>
         <div class="profile-details">
-            <p><strong>Name:</strong> {{ username.name }}</p>
-            <p><strong>Email:</strong> {{ username.email }}</p>
-            <p><strong>Qualification:</strong> {{ username.qualification }}</p>
-            <p><strong>Department:</strong> {{ username.department_id.dep_name }}</p>
+            <p>Name:<strong> {{ username.name }}</strong></p>
+            <p>Email:<strong> {{ username.email }}</strong></p>
+            <p>Qualification:<strong> {{ username.qualification }}</strong></p>
+            <p>Department:<strong> {{ username.department_id.dep_name }}</strong></p>
+            <p>username:<strong> {{ username.login.username }}</strong></p>
         </div>
         <a href="{% url 'staffeditprofile' username.id %}">
             <button class="edit-button">Edit Profile</button>

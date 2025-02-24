@@ -1,12 +1,19 @@
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
+from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 # Create your models here.
+class CollegesTable(models.Model):
+    college_name=models.CharField(max_length=50,blank=True,null=True)
+ 
+
 class LoginTable(models.Model):
     username=models.CharField(max_length=50,blank=True,null=True)
     password=models.CharField(max_length=50,blank=True,null=True)
     type=models.CharField(max_length=50,blank=True,null=True)
+    college_id=models.ForeignKey(CollegesTable,on_delete=models.CASCADE)
 
 class CollegeTable(models.Model):
     college=models.CharField(max_length=50,blank=True,null=True)

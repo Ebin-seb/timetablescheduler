@@ -12,6 +12,7 @@ urlpatterns = [
     path('login',LoginPage.as_view(), name="login"),
     path('logout',Logout.as_view(),name="logout"),
     path('reg',RegPage.as_view(),name="reg"),
+    path('forgot-password/', forgot_password, name='forgot_password'),
 
     path('admindash',AdminDash.as_view(),name="admindash"),
     path('adminprofile',Profile.as_view(),name='adminprofile'),

@@ -3,6 +3,7 @@ from django.contrib import admin
 from timetable_scheduler_app.models import *
 
 # Register your models here.
+admin.site.register(CollegesTable)
 admin.site.register(LoginTable)
 admin.site.register(StudentTable)
 admin.site.register(CollegeTable)

@@ -1,31 +1,30 @@
-from pyexpat.errors import messages
+
 from django.contrib.auth import logout
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
+from django.utils.cache import add_never_cache_headers
+from django.middleware.csrf import rotate_token
+from django.contrib.auth.hashers import make_password
 
 from timetable_scheduler_app.models import *
 from timetable_scheduler_app.form import *
 from .models import *
 
 
+
 class HomePage(View):
     def get(self, request):
         return render(request, "home.html")
+    
 class Logout(View):
     def get(self, request):
-        # Clear the session
         logout(request)
-
-        # Clear session and force expiry
-        request.session.flush() 
-        return HttpResponse('''
-                    <script>
-                        window.location.reload();
-                        window.location.href = "/login"; // Redirect to login
-                    </script>
-                ''')
-      
+        rotate_token(request)
+        response = redirect('login')  # Redirect to login page after logout
+        add_never_cache_headers(response)  # Prevent caching issues
+        return response      
+    
 class LoginPage(View):
     def get(self, request):
         return render(request, "login.html")
@@ -49,6 +48,7 @@ class LoginPage(View):
     
             return HttpResponse('''<script>alert('invalid username and password');window.location.href='/login';</script>''')
         
+
 
 class Add(View):
     def get(self,request):
@@ -397,6 +397,14 @@ class StaffEditProfile(View):
         obj.email = request.POST.get('email')
         obj.qualification = request.POST.get('qualification')
         department_id = request.POST.get('department_id')
+        new_password = request.POST.get('password')
+        if new_password:  # Only update if a new password is provided
+            obj.login.password = new_password
+            obj.login.save() 
+        usrname=request.POST.get('username')
+        if usrname:
+            obj.login.username=usrname
+            obj.login.save()
         try:
             department = DepartmentTable.objects.get(id=department_id)
             obj.department_id = department
@@ -430,6 +438,14 @@ class StudentEditProfile(View):
         obj.name = request.POST.get('name')
         obj.email = request.POST.get('email')
         course_id = request.POST.get('course_id')
+        new_password = request.POST.get('password')
+        if new_password:  # Only update if a new password is provided
+            obj.login_id.password = new_password
+            obj.login_id.save() 
+        usrname=request.POST.get('username')
+        if usrname:
+            obj.login_id.username=usrname
+            obj.login_id.save()
         try:
             course = CourseTable.objects.get(id=course_id)
             obj.course_id = course
@@ -485,18 +501,18 @@ class StaffProfile(View):
         # Assume the username is stored in the session after login
         userid = request.session.get('user_id')
         print(userid)
-        
         if userid:
             # Query the LoginTable to fetch the user's details
             try:
                 name = StaffTable.objects.get(login__id=userid)
+                
                 # email=StaffTable.objects.get()
                 # print(user)
             except LoginTable.DoesNotExist:
                 return redirect('login')  # Redirect to login if user not found
             
             # Pass the username to the template
-            return render(request, "staff_profile.html", {"username": name})
+            return render(request, "staff_profile.html", {"username": name })
         
         return redirect('login') 
 
@@ -1049,5 +1065,52 @@ def save_timetable(request):
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.mail import send_mail
+from .models import LoginTable, StudentTable, StaffTable
+import random
+import string
 
+def forgot_password(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+
+        # Case-insensitive email check
+        staff = StaffTable.objects.filter(email__iexact=email).first()
+        student = StudentTable.objects.filter(email__iexact=email).first()
+
+        # If no user is found, show an error message
+        if not staff and not student:
+            messages.error(request, "No user found with this email.")
+            return redirect("forgot_password")
+
+        # Determine which user type it is and get the login instance
+        login = None
+        if staff and staff.login:
+            login = staff.login
+        elif student and student.login_id:
+            login = student.login_id
+        else:
+            messages.error(request, "No user found with this email.")
+            return redirect("forgot_password")
+
+        # Generate a temporary password
+        usr=login.username
+        temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+
+        # Update the password (Consider hashing for security)
+        login.password = temp_password
+        login.save()
+
+        # Send email with the new password
+        subject = "Your Temporary Password"
+        message = f"Here is your temporary password: {temp_password} for the username {usr}\n\nPlease log in and change it immediately."
+        send_mail(subject, message, "your-email@gmail.com", [email])
+
+        messages.success(request, "A temporary password has been sent to your email.")
+        HttpResponse("a temperory password is send to your email")
+        return redirect("login")
+
+    return render(request, "forgot_password.html")
 
