@@ -13,18 +13,19 @@
   <table>
     <tr>
       <th>ID</th>
+      <th>semesters</th>
       <th>Subject</th>
       <th>Contact Hours</th>
       <th>Staff</th>
     </tr>
     {% for i in subjects %}
     <tr>
-      {% for semester in subject.class1.all %}
-          {{ semester.semester_name }}
-      {% endfor %}
       <td>{{ forloop.counter }}</td>
-      
-
+      <td>
+      {% for semester in i.class1.all %}
+      {{ semester.semester_name }}
+  {% endfor %}
+        </td>
       <td>{{ i.subject_name}}</td>
       <td>{{ i.contact_hours }}</td>
       <td>{{ i.staff.name }}</td>

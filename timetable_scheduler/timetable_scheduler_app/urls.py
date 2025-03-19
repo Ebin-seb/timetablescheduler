@@ -63,7 +63,7 @@ urlpatterns = [
     path('staffeditprofile/<int:prof_id>',StaffEditProfile.as_view(),name="staffeditprofile"),
     path('staffaddsub',StaffSubAdd.as_view(),name="staffaddsub"),
     path('staffeditsub/<int:sub_id>',StaffSubEdit.as_view(),name="staffeditsub"),
-
+    path('individual',StaffIndividual.as_view(),name="individual"),
 
     path('studentdash',StudentDash.as_view(),name="student"),
     path('studreg',StudentReg.as_view(),name="studreg"),

@@ -89,18 +89,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
-    },
-    'college_1': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'college_1.sqlite3',
-    },
-    'college_1': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'college_1.sqlite3',
-    }
+    },   
 }
 
-DATABASE_ROUTERS = ['timetable_scheduler_app.database_router.CollegeDatabaseRouter']
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 

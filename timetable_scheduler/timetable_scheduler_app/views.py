@@ -233,7 +233,7 @@ class AddSub(View):
         
 class ViewSub(View):
     def get(self,request):
-        obj=SubjectTable.objects.all()
+        obj=SubjectTable.objects.all().order_by("subject_name")
 
         return render(request,"college/view_subject.html",{'val':obj})
 
@@ -265,7 +265,8 @@ class StudSub(View):
             subjects = selected_semester.subjects.all() if selected_semester else []
         else:
             # If no semester is selected, get all subjects from all semesters of the course
-            subjects = SubjectTable.objects.filter(semesters__in=semesters).distinct().select_related('staff')
+            subjects = SubjectTable.objects.filter(class1__in=semesters).distinct().select_related('staff')
+
 
         return render(request, "student_viewsub.html", {
             'semesters': semesters,
@@ -330,7 +331,7 @@ class EditCourse (View):
 class AddSem(View):
     def  get(self,request):
         c = CourseTable.objects.all()
-        d = SubjectTable.objects.all()
+        d = SubjectTable.objects.all().order_by('subject_name')
         return render(request,"college/add_sem.html",{'v':c,'k':d})
     def post(self, request):
         form = Semform(request.POST)
@@ -354,7 +355,7 @@ class ViewSem(View):
 class EditSem (View):
     def get(self, request,sem_id):
         c =SemesterTable.objects.get(id=sem_id)
-        sub = SubjectTable.objects.all()
+        sub = SubjectTable.objects.all().order_by('subject_name')
         selected_sub=c.subjects.all()
         co=CourseTable.objects.all()
         return render(request, "college/edit_sem.html",{'c':c , 'sub':sub ,'co':co , 'selected_sub':selected_sub})
@@ -717,17 +718,27 @@ def generate_timetable(request):
     for subject in uncommon_subjects:
         faculty_subjects.setdefault(subject.staff, set()).add(subject)
     
+    last_subject_per_class = {}
+
     # Assign uncommon subjects
     for faculty, subjects in faculty_subjects.items():
         for subject in subjects:
             for cls in classes:
                 if subject in cls.subjects.all():
                     available_slots = [entry for entry in empty_slots if entry['cls'].id == cls.id]
-                    shuffle(available_slots)
+                    shuffle(available_slots)  # Randomize to avoid bias
                     
                     for entry in available_slots:
                         if subject.contact_hours <= 0:
                             break
+                        
+                        # Prevent consecutive periods for the same subject in a day
+                        prev_period = entry['period'] - 1
+                        prev_subject = last_subject_per_class.get((cls.id, entry['day']), None)
+                        
+                        if prev_subject == subject:  
+                            continue  # Skip if the previous period has the same subject
+                        
                         if not TimetableEntry.objects.filter(day=entry['day'], period=entry['period'], faculty=faculty).exists():
                             TimetableEntry.objects.create(
                                 day=entry['day'],
@@ -738,8 +749,9 @@ def generate_timetable(request):
                             )
                             empty_slots.remove(entry)
                             subject.contact_hours -= 1
-    
-    # Conflict resolution: Check for faculty scheduling conflicts and reassign
+
+                            # Update last assigned subject tracker
+                            last_subject_per_class[(cls.id, entry['day'])] = subject
     for faculty in faculty_subjects.keys():
         faculty_entries = TimetableEntry.objects.filter(faculty=faculty)
         occupied_slots = {}
@@ -800,6 +812,29 @@ def generate_timetable(request):
 
             # Decrease the remaining contact hours for this subject
             subject_hours_tracker[subject.id] -= 1
+# Check again for any remaining empty slots
+    remaining_empty_slots = [
+       {'day': entry['day'], 'period': entry['period'], 'cls': entry['cls']}
+
+        for entry in empty_slots
+    ]
+    print({'day': entry['day'], 'period': entry['period'], 'cls': entry['cls']})
+    for entry in remaining_empty_slots:
+        available_subjects = uncommon_subjects.filter(class1=entry['cls']).exclude(
+            id__in=TimetableEntry.objects.filter(day=entry['day'], period=entry['period'], cls=entry['cls']).values_list('subject', flat=True)
+        ).exclude(
+            staff__in=TimetableEntry.objects.filter(day=entry['day'], period=entry['period']).values_list('faculty', flat=True)
+        )
+
+        if available_subjects.exists():
+            subject = random.choice(list(available_subjects))
+            TimetableEntry.objects.create(
+                day=entry['day'],
+                period=entry['period'],
+                cls=entry['cls'],
+                subject=subject,
+                faculty=subject.staff
+            )
 
     
     return redirect('timetable')
@@ -1114,3 +1149,45 @@ def forgot_password(request):
 
     return render(request, "forgot_password.html")
 
+class StaffIndividual(View):
+    template_name = 'staff_individual.html'  # Specify your template name here
+
+    def get(self, request, *args, **kwargs):
+        # Get the logged-in student
+        userid = request.session.get('user_id')
+        print(userid)
+        
+        if userid:
+            # Query the LoginTable to fetch the user's details
+            try:
+                staff = StaffTable.objects.get(login__id=userid)
+                print(staff)
+            except LoginTable.DoesNotExist:
+                return redirect('login')  
+
+        try:
+            staff_member = StaffTable.objects.get(login=userid)  # Get the staff member
+            timetable_entries = TimetableEntry.objects.filter(faculty=staff_member)
+            # sem=SemesterTable.objects.filter(subjects.staff.)
+
+            # Define days and periods
+            days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+            periods = [1, 2, 3, 4, 5]
+
+            # Create an empty timetable dictionary
+            timetable = {day: {period: "" for period in periods} for day in days}
+
+# Populate the timetable dictionary with assigned semester names
+            for entry in timetable_entries:
+                    if entry.day in timetable and entry.period in timetable[entry.day]:
+                        timetable[entry.day][entry.period] = entry.cls.semester_name
+
+        except StaffTable.DoesNotExist:
+            return render(request, "staff_individual.html", {"error": "Staff not found"})
+
+        return render(request, "staff_individual.html",{
+            "staff_member": staff_member,
+            "timetable": timetable,
+            "days": days,
+            "periods": periods,
+        })
